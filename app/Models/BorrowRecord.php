@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class BorrowRecord extends Model
 {
     protected $fillable = [
-        'user_id', 'book_id', 'borrowed_at', 'due_date', 'returned_at', 'overdue_notified_at', 'status',
+        'user_id', 'book_id', 'reviewed_by', 'borrowed_at', 'due_date', 'returned_at', 'reviewed_at', 'overdue_notified_at', 'status',
     ];
 
     protected function casts(): array
@@ -17,6 +17,7 @@ class BorrowRecord extends Model
             'borrowed_at' => 'date',
             'due_date' => 'date',
             'returned_at' => 'date',
+            'reviewed_at' => 'datetime',
             'overdue_notified_at' => 'datetime',
         ];
     }
@@ -29,5 +30,10 @@ class BorrowRecord extends Model
     public function book(): BelongsTo
     {
         return $this->belongsTo(Book::class);
+    }
+
+    public function reviewer(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'reviewed_by');
     }
 }

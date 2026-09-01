@@ -59,13 +59,14 @@ class BookController extends Controller
     public function show(Request $request, Book $book): View
     {
         $book->load('category');
-        $hasActiveBorrow = $request->user()
+        $currentBorrow = $request->user()
             ->borrowRecords()
             ->whereBelongsTo($book)
-            ->whereIn('status', ['borrowed', 'overdue'])
-            ->exists();
+            ->whereIn('status', ['pending', 'borrowed', 'overdue'])
+            ->latest()
+            ->first();
 
-        return view('books.show', compact('book', 'hasActiveBorrow'));
+        return view('books.show', compact('book', 'currentBorrow'));
     }
 
     public function edit(Book $book): View

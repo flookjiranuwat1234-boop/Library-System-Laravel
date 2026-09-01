@@ -44,7 +44,7 @@ class LowBookStockNotificationTest extends TestCase
         Notification::assertNothingSent();
     }
 
-    public function test_borrowing_a_book_queues_the_low_stock_email(): void
+    public function test_approving_a_borrow_queues_the_low_stock_email(): void
     {
         Notification::fake();
         $administrator = User::factory()->create(['role' => 'admin']);
@@ -54,6 +54,13 @@ class LowBookStockNotificationTest extends TestCase
         $this->actingAs($member)
             ->post(route('borrows.store'), ['book_id' => $book->id])
             ->assertRedirect(route('borrows.index'));
+
+        Notification::assertNotSentTo($administrator, LowBookStockNotification::class);
+
+        $borrow = $member->borrowRecords()->firstOrFail();
+
+        $this->actingAs($administrator)
+            ->post(route('borrows.approve', $borrow));
 
         Notification::assertSentTo($administrator, LowBookStockNotification::class);
         $this->assertSame(2, $book->fresh()->stock);

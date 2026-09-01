@@ -4,10 +4,13 @@ namespace App\Http\Controllers;
 
 use App\Models\Book;
 use App\Models\BorrowRecord;
+use App\Models\User;
+use App\Notifications\NewBorrowRequestNotification;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Notification;
 use Illuminate\View\View;
 
 class BorrowRecordController extends Controller
@@ -16,9 +19,9 @@ class BorrowRecordController extends Controller
     {
         $user = Auth::user();
         if ($user->role === 'admin') {
-            $borrows = BorrowRecord::with(['book', 'user'])->orderByDesc('borrowed_at')->paginate(20);
+            $borrows = BorrowRecord::with(['book', 'user'])->latest()->paginate(20);
         } else {
-            $borrows = BorrowRecord::with('book')->whereBelongsTo($user)->orderByDesc('borrowed_at')->paginate(20);
+            $borrows = BorrowRecord::with('book')->whereBelongsTo($user)->latest()->paginate(20);
         }
 
         return view('borrows.index', compact('borrows'));
@@ -30,7 +33,7 @@ class BorrowRecordController extends Controller
             'book_id' => ['required', 'integer', 'exists:books,id'],
         ]);
 
-        $result = DB::transaction(function () use ($validated): string {
+        $result = DB::transaction(function () use ($validated): BorrowRecord|string {
             $book = Book::query()->lockForUpdate()->findOrFail($validated['book_id']);
 
             if ($book->stock <= 0) {
@@ -40,35 +43,89 @@ class BorrowRecordController extends Controller
             $alreadyBorrowed = BorrowRecord::query()
                 ->where('user_id', Auth::id())
                 ->where('book_id', $book->id)
-                ->whereIn('status', ['borrowed', 'overdue'])
+                ->whereIn('status', ['pending', 'borrowed', 'overdue'])
                 ->exists();
 
             if ($alreadyBorrowed) {
                 return 'already-borrowed';
             }
 
-            $book->decrement('stock');
-
-            BorrowRecord::create([
+            return BorrowRecord::create([
                 'user_id' => Auth::id(),
                 'book_id' => $book->id,
+                'status' => 'pending',
+            ]);
+        });
+
+        if ($result === 'out-of-stock') {
+            return back()->with('error', 'หนังสือเล่มนี้ไม่มีจำนวนพร้อมให้ยืม');
+        }
+
+        if ($result === 'already-borrowed') {
+            return back()->with('error', 'คุณมีคำขอหรือกำลังยืมหนังสือเล่มนี้อยู่แล้ว');
+        }
+
+        $result->load(['book', 'user']);
+        $administrators = User::query()->where('role', 'admin')->get();
+        Notification::send($administrators, new NewBorrowRequestNotification($result));
+
+        return redirect()->route('borrows.index')->with('success', 'ส่งคำขอยืมแล้ว กรุณารอผู้ดูแลอนุมัติ');
+    }
+
+    public function approve(BorrowRecord $borrow): RedirectResponse
+    {
+        $result = DB::transaction(function () use ($borrow): string {
+            $borrow = BorrowRecord::query()->lockForUpdate()->findOrFail($borrow->id);
+
+            if ($borrow->status !== 'pending') {
+                return 'not-pending';
+            }
+
+            $book = Book::query()->lockForUpdate()->findOrFail($borrow->book_id);
+
+            if ($book->stock <= 0) {
+                return 'out-of-stock';
+            }
+
+            $book->decrement('stock');
+            $borrow->update([
+                'reviewed_by' => Auth::id(),
+                'reviewed_at' => now(),
                 'borrowed_at' => today(),
                 'due_date' => today()->addDays(14),
                 'status' => 'borrowed',
             ]);
 
-            return 'borrowed';
+            return 'approved';
         });
 
         if ($result === 'out-of-stock') {
-            return back()->with('error', 'หนังสือเล่มนี้ถูกยืมหมดแล้ว');
+            return back()->with('error', 'ไม่สามารถอนุมัติได้ เนื่องจากหนังสือไม่มีจำนวนคงเหลือ');
         }
 
-        if ($result === 'already-borrowed') {
-            return back()->with('error', 'คุณกำลังยืมหนังสือเล่มนี้อยู่แล้ว');
+        if ($result === 'not-pending') {
+            return back()->with('error', 'คำขอนี้ได้รับการดำเนินการแล้ว');
         }
 
-        return redirect()->route('borrows.index')->with('success', 'ยืมหนังสือเรียบร้อยแล้ว');
+        return back()->with('success', 'อนุมัติคำขอยืมเรียบร้อยแล้ว');
+    }
+
+    public function reject(BorrowRecord $borrow): RedirectResponse
+    {
+        $rejected = BorrowRecord::query()
+            ->whereKey($borrow->id)
+            ->where('status', 'pending')
+            ->update([
+                'reviewed_by' => Auth::id(),
+                'reviewed_at' => now(),
+                'status' => 'rejected',
+            ]);
+
+        if ($rejected === 0) {
+            return back()->with('error', 'คำขอนี้ได้รับการดำเนินการแล้ว');
+        }
+
+        return back()->with('success', 'ปฏิเสธคำขอยืมเรียบร้อยแล้ว');
     }
 
     public function returnBook(BorrowRecord $borrow): RedirectResponse
@@ -76,7 +133,7 @@ class BorrowRecordController extends Controller
         $returned = DB::transaction(function () use ($borrow): bool {
             $borrow = BorrowRecord::query()->lockForUpdate()->findOrFail($borrow->id);
 
-            if ($borrow->status === 'returned') {
+            if (! in_array($borrow->status, ['borrowed', 'overdue'], true)) {
                 return false;
             }
 

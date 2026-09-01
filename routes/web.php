@@ -37,6 +37,14 @@ Route::get('/dashboard', function () {
             ->whereBelongsTo($user)
             ->whereIn('status', ['borrowed', 'overdue'])
             ->count(),
+        'latestBooks' => Book::query()->with('category')->latest()->take(4)->get(),
+        'dueSoonBorrows' => BorrowRecord::query()
+            ->with('book')
+            ->whereBelongsTo($user)
+            ->whereIn('status', ['borrowed', 'overdue'])
+            ->orderBy('due_date')
+            ->take(4)
+            ->get(),
     ]);
 })->middleware(['auth', 'verified'])->name('dashboard');
 
@@ -56,6 +64,8 @@ Route::middleware('auth')->group(function () {
         Route::resource('categories', CategoryController::class)->except('show');
         Route::resource('books', BookController::class)->except(['index', 'show']);
         Route::post('/borrows/{borrow}/return', [BorrowRecordController::class, 'returnBook'])->name('borrows.return');
+        Route::post('/borrows/{borrow}/approve', [BorrowRecordController::class, 'approve'])->name('borrows.approve');
+        Route::post('/borrows/{borrow}/reject', [BorrowRecordController::class, 'reject'])->name('borrows.reject');
         Route::get('/admin/settings', [SettingsController::class, 'edit'])->name('admin.settings.edit');
         Route::put('/admin/settings', [SettingsController::class, 'update'])->name('admin.settings.update');
         Route::post('/admin/settings/test-email', [SettingsController::class, 'testEmail'])->name('admin.settings.test-email');

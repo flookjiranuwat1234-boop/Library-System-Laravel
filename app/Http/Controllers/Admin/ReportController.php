@@ -33,8 +33,8 @@ class ReportController extends Controller
                 fn (BorrowRecord $record) => fputcsv($stream, [
                     $record->book->title,
                     $record->user->name,
-                    $record->borrowed_at->format('Y-m-d'),
-                    $record->due_date->format('Y-m-d'),
+                    $record->borrowed_at?->format('Y-m-d') ?? '-',
+                    $record->due_date?->format('Y-m-d') ?? '-',
                     $record->status,
                 ]),
             );

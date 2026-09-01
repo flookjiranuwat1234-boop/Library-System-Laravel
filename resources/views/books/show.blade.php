@@ -46,17 +46,17 @@
                         </div>
 
                         <div class="mt-8 border-t pt-6">
-                            @if($hasActiveBorrow)
+                            @if($currentBorrow)
                                 <div class="inline-flex items-center rounded-lg bg-amber-100 px-5 py-3 font-semibold text-amber-800">
-                                    คุณกำลังยืมหนังสือเล่มนี้อยู่
+                                    {{ $currentBorrow->status === 'pending' ? 'คำขอยืมกำลังรอผู้ดูแลอนุมัติ' : 'คุณกำลังยืมหนังสือเล่มนี้อยู่' }}
                                 </div>
-                                <p class="mt-2 text-sm text-gray-500">ตรวจสอบวันครบกำหนดได้ที่รายการยืมของฉัน</p>
+                                <p class="mt-2 text-sm text-gray-500">{{ $currentBorrow->status === 'pending' ? 'ระบบจะกำหนดวันยืมและวันคืนหลังได้รับอนุมัติ' : 'ตรวจสอบวันครบกำหนดได้ที่รายการยืมของฉัน' }}</p>
                             @elseif($book->stock > 0)
                                 <form action="{{ route('borrows.store') }}" method="POST">
                                     @csrf
                                     <input type="hidden" name="book_id" value="{{ $book->id }}">
                                     <button type="submit" class="button-primary px-6 py-3">
-                                        ยืมหนังสือเล่มนี้
+                                        ส่งคำขอยืมหนังสือ
                                     </button>
                                 </form>
                             @else

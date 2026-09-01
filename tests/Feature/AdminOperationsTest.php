@@ -55,6 +55,27 @@ class AdminOperationsTest extends TestCase
         $this->assertNotNull($borrow->fresh()->overdue_notified_at);
     }
 
+    public function test_new_borrow_request_is_stored_and_visible_in_admin_notifications(): void
+    {
+        $admin = User::factory()->create(['role' => 'admin']);
+        $member = User::factory()->create(['role' => 'user', 'name' => 'สมาชิกทดสอบ']);
+        $book = Book::factory()->create(['title' => 'หนังสือรออนุมัติ', 'stock' => 2]);
+
+        $this->actingAs($member)
+            ->post(route('borrows.store'), ['book_id' => $book->id])
+            ->assertRedirect(route('borrows.index'));
+
+        $notification = $admin->notifications()->firstOrFail();
+        $this->assertSame('borrow_request', $notification->data['type']);
+        $this->assertSame('มีคำขอยืมหนังสือใหม่', $notification->data['title']);
+        $this->assertSame(route('borrows.index'), $notification->data['url']);
+
+        $this->actingAs($admin)
+            ->get(route('admin.notifications.index'))
+            ->assertSee('สมาชิกทดสอบ ขอยืมหนังสือ “หนังสือรออนุมัติ”')
+            ->assertSee('เปิดรายการเพื่อดำเนินการ');
+    }
+
     public function test_admin_can_download_excel_compatible_report_and_create_backup(): void
     {
         Storage::fake('local');

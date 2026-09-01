@@ -1,85 +1,50 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="page-title">
-            {{ Auth::user()->role === 'admin' ? __('Borrow Records (Admin)') : __('My Borrows') }}
-        </h2>
+        <div class="flex flex-col gap-1 sm:flex-row sm:items-end sm:justify-between">
+            <div><p class="text-sm font-semibold text-emerald-600">{{ Auth::user()->role === 'admin' ? 'งานบริการยืม–คืน' : 'พื้นที่สมาชิก' }}</p><h2 class="page-title">{{ Auth::user()->role === 'admin' ? 'คำขอและประวัติการยืม' : 'รายการยืมของฉัน' }}</h2></div>
+            <p class="text-sm text-slate-500">พบ {{ $borrows->total() }} รายการ</p>
+        </div>
     </x-slot>
 
-    <div class="page-shell">
-        <div class="page-container">
-            <div class="panel p-5 sm:p-6">
-                
-                @if(session('success'))
-                    <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-4" role="alert">
-                        <span class="block sm:inline">{{ session('success') }}</span>
-                    </div>
-                @endif
-                @if(session('error'))
-                    <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
-                        <span class="block sm:inline">{{ session('error') }}</span>
-                    </div>
-                @endif
+    <div class="page-shell"><div class="page-container space-y-5">
+        @if(session('success'))<div class="rounded-2xl border border-emerald-200 bg-emerald-50 px-5 py-4 text-sm font-medium text-emerald-800" role="alert">{{ session('success') }}</div>@endif
+        @if(session('error'))<div class="rounded-2xl border border-rose-200 bg-rose-50 px-5 py-4 text-sm font-medium text-rose-800" role="alert">{{ session('error') }}</div>@endif
 
-                <div class="table-shell">
-                    <table class="min-w-full divide-y divide-gray-200">
-                        <thead class="bg-gray-50">
-                            <tr>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">หนังสือ</th>
-                                @if(Auth::user()->role === 'admin')
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">สมาชิก</th>
-                                @endif
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">วันที่ยืม</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">วันครบกำหนด</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">สถานะ</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">จัดการ</th>
-                            </tr>
-                        </thead>
-                        <tbody class="bg-white divide-y divide-gray-200">
-                            @forelse($borrows as $borrow)
-                            @php($isOverdue = $borrow->status !== 'returned' && $borrow->due_date->isPast())
-                            <tr>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                    <a href="{{ route('books.show', $borrow->book) }}" class="font-semibold text-emerald-600 hover:text-emerald-800">{{ $borrow->book->title }}</a>
-                                </td>
-                                @if(Auth::user()->role === 'admin')
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $borrow->user->name }}</td>
-                                @endif
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $borrow->borrowed_at->locale('th')->translatedFormat('j M Y') }}</td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $borrow->due_date->locale('th')->translatedFormat('j M Y') }}</td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm">
-                                    @if($borrow->status === 'returned')
-                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">คืนแล้ว</span>
-                                    @elseif($isOverdue)
-                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">เกินกำหนด</span>
-                                    @else
-                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">กำลังยืม</span>
-                                    @endif
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                    @if($borrow->status !== 'returned' && Auth::user()->role === 'admin')
-                                        <form action="{{ route('borrows.return', $borrow) }}" method="POST" class="inline-block">
-                                            @csrf
-                                            <button type="submit" class="font-semibold text-emerald-600 hover:text-emerald-800">บันทึกการคืน</button>
-                                        </form>
-                                    @elseif($borrow->status !== 'returned')
-                                        <span class="text-gray-400 italic">กรุณาคืนหนังสือที่เจ้าหน้าที่</span>
-                                    @else
-                                        <span class="text-gray-500">คืนเมื่อ {{ $borrow->returned_at->locale('th')->translatedFormat('j M Y') }}</span>
-                                    @endif
-                                </td>
-                            </tr>
-                            @empty
-                            <tr>
-                                <td colspan="{{ Auth::user()->role === 'admin' ? 6 : 5 }}" class="px-6 py-4 text-center text-sm text-gray-500">ยังไม่มีประวัติการยืม</td>
-                            </tr>
-                            @endforelse
-                        </tbody>
-                    </table>
-                </div>
-
-                <div class="mt-6">{{ $borrows->links() }}</div>
-
-            </div>
-        </div>
-    </div>
+        <div class="panel overflow-hidden"><div class="overflow-x-auto"><table class="min-w-full divide-y divide-slate-200">
+            <thead class="bg-slate-50"><tr>
+                <th class="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">หนังสือ</th>
+                @if(Auth::user()->role === 'admin')<th class="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">สมาชิก</th>@endif
+                <th class="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">วันที่ยืม</th><th class="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">กำหนดคืน</th><th class="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">สถานะ</th><th class="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">จัดการ</th>
+            </tr></thead>
+            <tbody class="divide-y divide-slate-100 bg-white">
+                @forelse($borrows as $borrow)
+                    @php($isOverdue = in_array($borrow->status, ['borrowed', 'overdue']) && $borrow->due_date?->isPast())
+                    <tr class="transition hover:bg-slate-50/80">
+                        <td class="px-6 py-4 text-sm"><a href="{{ route('books.show', $borrow->book) }}" class="font-semibold text-slate-900 hover:text-emerald-700">{{ $borrow->book->title }}</a></td>
+                        @if(Auth::user()->role === 'admin')<td class="px-6 py-4 text-sm text-slate-700">{{ $borrow->user->name }}</td>@endif
+                        <td class="whitespace-nowrap px-6 py-4 text-sm text-slate-500">{{ $borrow->borrowed_at?->locale('th')->translatedFormat('j M Y') ?? 'รออนุมัติ' }}</td>
+                        <td class="whitespace-nowrap px-6 py-4 text-sm text-slate-500">{{ $borrow->due_date?->locale('th')->translatedFormat('j M Y') ?? 'ยังไม่กำหนด' }}</td>
+                        <td class="whitespace-nowrap px-6 py-4 text-sm">
+                            @if($borrow->status === 'pending')<span class="status-badge bg-amber-100 text-amber-800">รออนุมัติ</span>
+                            @elseif($borrow->status === 'rejected')<span class="status-badge bg-slate-100 text-slate-600">ไม่อนุมัติ</span>
+                            @elseif($borrow->status === 'returned')<span class="status-badge bg-emerald-100 text-emerald-800">คืนแล้ว</span>
+                            @elseif($isOverdue)<span class="status-badge bg-rose-100 text-rose-800">เกินกำหนด</span>
+                            @else<span class="status-badge bg-sky-100 text-sky-800">กำลังยืม</span>@endif
+                        </td>
+                        <td class="whitespace-nowrap px-6 py-4 text-sm font-medium">
+                            @if(Auth::user()->role === 'admin' && $borrow->status === 'pending')
+                                <div class="flex gap-3"><form action="{{ route('borrows.approve', $borrow) }}" method="POST">@csrf<button type="submit" class="font-semibold text-emerald-600 hover:text-emerald-800">อนุมัติ</button></form><form action="{{ route('borrows.reject', $borrow) }}" method="POST" onsubmit="return confirm('ยืนยันการปฏิเสธคำขอนี้หรือไม่?');">@csrf<button type="submit" class="font-semibold text-rose-600 hover:text-rose-800">ปฏิเสธ</button></form></div>
+                            @elseif(Auth::user()->role === 'admin' && in_array($borrow->status, ['borrowed', 'overdue']))
+                                <form action="{{ route('borrows.return', $borrow) }}" method="POST">@csrf<button type="submit" class="font-semibold text-emerald-600 hover:text-emerald-800">บันทึกการคืน</button></form>
+                            @elseif($borrow->status === 'pending')<span class="text-slate-400">ผู้ดูแลกำลังตรวจสอบ</span>
+                            @elseif(in_array($borrow->status, ['borrowed', 'overdue']))<span class="text-slate-400">คืนหนังสือที่เคาน์เตอร์</span>
+                            @elseif($borrow->status === 'returned')<span class="text-slate-500">คืนเมื่อ {{ $borrow->returned_at?->locale('th')->translatedFormat('j M Y') }}</span>
+                            @else<span class="text-slate-400">สิ้นสุดคำขอ</span>@endif
+                        </td>
+                    </tr>
+                @empty<tr><td colspan="{{ Auth::user()->role === 'admin' ? 6 : 5 }}" class="px-6 py-14 text-center text-sm text-slate-500">ยังไม่มีคำขอหรือประวัติการยืม</td></tr>@endforelse
+            </tbody>
+        </table></div></div>
+        <div>{{ $borrows->links() }}</div>
+    </div></div>
 </x-app-layout>

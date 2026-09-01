@@ -41,7 +41,26 @@ class LibraryManagementTest extends TestCase
         $this->actingAs($user)
             ->get('/books/'.$book->id)
             ->assertOk()
-            ->assertSee('ยืมหนังสือเล่มนี้');
+            ->assertSee('ส่งคำขอยืมหนังสือ');
+    }
+
+    public function test_member_dashboard_shows_new_books_and_upcoming_due_dates(): void
+    {
+        $member = User::factory()->create(['role' => 'user']);
+        $book = Book::factory()->create(['title' => 'หนังสือมาใหม่สำหรับสมาชิก']);
+        BorrowRecord::create([
+            'user_id' => $member->id,
+            'book_id' => $book->id,
+            'borrowed_at' => today(),
+            'due_date' => today()->addDays(7),
+            'status' => 'borrowed',
+        ]);
+
+        $this->actingAs($member)
+            ->get(route('dashboard'))
+            ->assertOk()
+            ->assertSee('หนังสือมาใหม่สำหรับสมาชิก')
+            ->assertSee('กำหนดคืน');
     }
 
     public function test_book_details_show_that_member_already_has_an_active_loan(): void
@@ -92,11 +111,11 @@ class LibraryManagementTest extends TestCase
         $this->actingAs($user)
             ->from('/books/'.$book->id)
             ->post('/borrows', ['book_id' => $book->id])
-            ->assertSessionHas('error', 'คุณกำลังยืมหนังสือเล่มนี้อยู่แล้ว')
+            ->assertSessionHas('error', 'คุณมีคำขอหรือกำลังยืมหนังสือเล่มนี้อยู่แล้ว')
             ->assertRedirect('/books/'.$book->id);
     }
 
-    public function test_member_can_borrow_available_book_and_stock_is_decreased(): void
+    public function test_member_can_request_available_book_without_decreasing_stock(): void
     {
         $this->travelTo('2026-08-31 10:00:00');
         $user = User::factory()->create(['role' => 'user']);
@@ -105,16 +124,16 @@ class LibraryManagementTest extends TestCase
         $this->actingAs($user)
             ->post(route('borrows.store'), ['book_id' => $book->id])
             ->assertRedirect(route('borrows.index'))
-            ->assertSessionHas('success', 'ยืมหนังสือเรียบร้อยแล้ว');
+            ->assertSessionHas('success', 'ส่งคำขอยืมแล้ว กรุณารอผู้ดูแลอนุมัติ');
 
         $this->assertDatabaseHas('borrow_records', [
             'user_id' => $user->id,
             'book_id' => $book->id,
-            'borrowed_at' => '2026-08-31 00:00:00',
-            'due_date' => '2026-09-14 00:00:00',
-            'status' => 'borrowed',
+            'borrowed_at' => null,
+            'due_date' => null,
+            'status' => 'pending',
         ]);
-        $this->assertSame(1, $book->fresh()->stock);
+        $this->assertSame(2, $book->fresh()->stock);
     }
 
     public function test_out_of_stock_book_cannot_be_borrowed(): void
@@ -126,7 +145,7 @@ class LibraryManagementTest extends TestCase
             ->from(route('books.show', $book))
             ->post(route('borrows.store'), ['book_id' => $book->id])
             ->assertRedirect(route('books.show', $book))
-            ->assertSessionHas('error', 'หนังสือเล่มนี้ถูกยืมหมดแล้ว');
+            ->assertSessionHas('error', 'หนังสือเล่มนี้ไม่มีจำนวนพร้อมให้ยืม');
 
         $this->assertDatabaseMissing('borrow_records', [
             'user_id' => $user->id,
