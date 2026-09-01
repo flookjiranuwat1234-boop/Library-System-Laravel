@@ -74,6 +74,13 @@ class AdminOperationsTest extends TestCase
             ->get(route('admin.notifications.index'))
             ->assertSee('สมาชิกทดสอบ ขอยืมหนังสือ “หนังสือรออนุมัติ”')
             ->assertSee('เปิดรายการเพื่อดำเนินการ');
+
+        $this->actingAs($admin)
+            ->get(route('admin.dashboard'))
+            ->assertSee('การแจ้งเตือน (1 รายการใหม่)')
+            ->assertSee(route('admin.notifications.index'))
+            ->assertSee(route('admin.reports.index'))
+            ->assertSee(route('admin.settings.edit'));
     }
 
     public function test_admin_can_download_excel_compatible_report_and_create_backup(): void
