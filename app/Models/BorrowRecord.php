@@ -11,7 +11,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class BorrowRecord extends Model
 {
     protected $fillable = [
-        'user_id', 'book_id', 'reviewed_by', 'borrowed_at', 'due_date', 'returned_at', 'reviewed_at', 'overdue_notified_at', 'status',
+        'user_id', 'book_id', 'reviewed_by', 'borrowed_at', 'due_date', 'returned_at',
+        'reviewed_at', 'overdue_notified_at', 'status', 'renew_count',
     ];
 
     protected function casts(): array
@@ -22,6 +23,7 @@ class BorrowRecord extends Model
             'returned_at' => 'date',
             'reviewed_at' => 'datetime',
             'overdue_notified_at' => 'datetime',
+            'renew_count' => 'integer',
         ];
     }
 
@@ -38,5 +40,11 @@ class BorrowRecord extends Model
     public function reviewer(): BelongsTo
     {
         return $this->belongsTo(User::class, 'reviewed_by');
+    }
+
+    public function canRenew(): bool
+    {
+        return in_array($this->status, ['borrowed', 'overdue'], true)
+            && $this->renew_count < 2;
     }
 }

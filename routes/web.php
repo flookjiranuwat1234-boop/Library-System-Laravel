@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\ActivityLogController;
 use App\Http\Controllers\Admin\BadgeAdminController;
 use App\Http\Controllers\Admin\NotificationController;
 use App\Http\Controllers\Admin\ReadingJourneyAdminController;
@@ -8,6 +9,7 @@ use App\Http\Controllers\Admin\SettingsController;
 use App\Http\Controllers\AdminDashboardController;
 use App\Http\Controllers\BookController;
 use App\Http\Controllers\BorrowRecordController;
+use App\Http\Controllers\CatalogController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ReadingJourneyController;
@@ -18,6 +20,7 @@ use App\Models\Category;
 use App\Services\ReadingJourneyService;
 use Illuminate\Support\Facades\Route;
 
+// Public routes
 Route::get('/', function () {
     if (auth()->check()) {
         return redirect()->route('dashboard');
@@ -30,6 +33,8 @@ Route::get('/', function () {
         'featuredBooks' => Book::with('category')->latest()->take(3)->get(),
     ]);
 });
+
+Route::get('/catalog', [CatalogController::class, 'index'])->name('catalog.index');
 
 Route::get('/dashboard', function () {
     $user = request()->user();
@@ -76,6 +81,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/books/{book}', [BookController::class, 'show'])->whereNumber('book')->name('books.show');
     Route::get('/borrows', [BorrowRecordController::class, 'index'])->name('borrows.index');
     Route::post('/borrows', [BorrowRecordController::class, 'store'])->name('borrows.store');
+    Route::post('/borrows/{borrow}/renew', [BorrowRecordController::class, 'renew'])->name('borrows.renew');
     Route::get('/journey', [ReadingJourneyController::class, 'index'])->name('journey.index');
 
     // Admin Routes
@@ -83,6 +89,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/admin/dashboard', [AdminDashboardController::class, 'index'])->name('admin.dashboard');
         Route::resource('categories', CategoryController::class)->except('show');
         Route::resource('books', BookController::class)->except(['index', 'show']);
+        Route::get('/books/{book}/qr', [BookController::class, 'qr'])->name('books.qr');
         Route::post('/borrows/{borrow}/return', [BorrowRecordController::class, 'returnBook'])->name('borrows.return');
         Route::post('/borrows/{borrow}/approve', [BorrowRecordController::class, 'approve'])->name('borrows.approve');
         Route::post('/borrows/{borrow}/reject', [BorrowRecordController::class, 'reject'])->name('borrows.reject');
@@ -94,6 +101,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/admin/reports', [ReportController::class, 'index'])->name('admin.reports.index');
         Route::get('/admin/reports/print', [ReportController::class, 'print'])->name('admin.reports.print');
         Route::get('/admin/reports/csv', [ReportController::class, 'csv'])->name('admin.reports.csv');
+        Route::get('/admin/activity-logs', [ActivityLogController::class, 'index'])->name('admin.activity-logs.index');
 
         // Reading Journey & Badges Management
         Route::get('/admin/journey', [ReadingJourneyAdminController::class, 'index'])->name('admin.journey.index');

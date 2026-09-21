@@ -25,6 +25,10 @@ class StoreBookRequest extends FormRequest
         return [
             'title' => ['required', 'string', 'max:255'],
             'author' => ['required', 'string', 'max:255'],
+            'isbn' => ['nullable', 'string', 'max:20', 'unique:books,isbn'],
+            'publisher' => ['nullable', 'string', 'max:255'],
+            'year' => ['nullable', 'integer', 'min:1000', 'max:'.(date('Y') + 1)],
+            'pages' => ['nullable', 'integer', 'min:1'],
             'category_id' => ['required', 'integer', 'exists:categories,id'],
             'cover_image' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
             'description' => ['nullable', 'string'],

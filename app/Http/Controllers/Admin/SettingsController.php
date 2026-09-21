@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Setting;
 use App\Notifications\TestEmailNotification;
+use App\Services\ActivityLogService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -25,6 +26,8 @@ class SettingsController extends Controller
         ]);
 
         Setting::put('low_stock_threshold', $validated['low_stock_threshold']);
+
+        app(ActivityLogService::class)->log('settings.updated', 'แก้ไขการตั้งค่าระบบ', null, $validated);
 
         return back()->with('success', 'บันทึกการตั้งค่าเรียบร้อยแล้ว');
     }

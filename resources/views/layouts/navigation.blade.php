@@ -75,6 +75,7 @@
                         @if(Auth::user()->role === 'admin')
                             <x-dropdown-link :href="route('admin.notifications.index')">การแจ้งเตือน{{ $unreadAdminNotificationsCount > 0 ? ' ('.$unreadAdminNotificationsCount.' รายการใหม่)' : '' }}</x-dropdown-link>
                             <x-dropdown-link :href="route('admin.reports.index')">รายงาน</x-dropdown-link>
+                            <x-dropdown-link :href="route('admin.activity-logs.index')">บันทึกกิจกรรม</x-dropdown-link>
                             <x-dropdown-link :href="route('admin.settings.edit')">ตั้งค่าระบบ</x-dropdown-link>
                         @endif
 
@@ -151,6 +152,7 @@
                         การแจ้งเตือน{{ $unreadAdminNotificationsCount > 0 ? ' ('.$unreadAdminNotificationsCount.' รายการใหม่)' : '' }}
                     </x-responsive-nav-link>
                     <x-responsive-nav-link :href="route('admin.reports.index')">รายงาน</x-responsive-nav-link>
+                    <x-responsive-nav-link :href="route('admin.activity-logs.index')">บันทึกกิจกรรม</x-responsive-nav-link>
                     <x-responsive-nav-link :href="route('admin.settings.edit')">ตั้งค่าระบบ</x-responsive-nav-link>
                 @endif
 

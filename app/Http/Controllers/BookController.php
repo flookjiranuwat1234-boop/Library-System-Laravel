@@ -6,6 +6,7 @@ use App\Http\Requests\StoreBookRequest;
 use App\Http\Requests\UpdateBookRequest;
 use App\Models\Book;
 use App\Models\Category;
+use App\Services\ActivityLogService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -17,6 +18,9 @@ class BookController extends Controller
     {
         $search = $request->string('search')->trim()->toString();
         $categoryId = $request->integer('category');
+        $publisher = $request->string('publisher')->trim()->toString();
+        $year = $request->integer('year');
+        $isbn = $request->string('isbn')->trim()->toString();
 
         $books = Book::query()
             ->with('category')
@@ -27,13 +31,16 @@ class BookController extends Controller
                 });
             })
             ->when($categoryId > 0, fn ($query) => $query->where('category_id', $categoryId))
+            ->when($publisher !== '', fn ($query) => $query->where('publisher', 'like', "%{$publisher}%"))
+            ->when($year > 0, fn ($query) => $query->where('year', $year))
+            ->when($isbn !== '', fn ($query) => $query->where('isbn', 'like', "%{$isbn}%"))
             ->orderBy('title')
             ->paginate(12)
             ->withQueryString();
 
         $categories = Category::query()->orderBy('name')->get();
 
-        return view('books.index', compact('books', 'categories', 'search', 'categoryId'));
+        return view('books.index', compact('books', 'categories', 'search', 'categoryId', 'publisher', 'year', 'isbn'));
     }
 
     public function create(): View
@@ -51,7 +58,9 @@ class BookController extends Controller
             $validated['cover_image'] = $request->file('cover_image')->store('book-covers', 'public');
         }
 
-        Book::create($validated);
+        $book = Book::create($validated);
+
+        app(ActivityLogService::class)->log('book.created', "เพิ่มหนังสือ: {$book->title}", $book, ['title' => $book->title]);
 
         return redirect()->route('books.index')->with('success', 'เพิ่มหนังสือเรียบร้อยแล้ว');
     }
@@ -66,7 +75,9 @@ class BookController extends Controller
             ->latest()
             ->first();
 
-        return view('books.show', compact('book', 'currentBorrow'));
+        $bookUrl = route('books.show', $book);
+
+        return view('books.show', compact('book', 'currentBorrow', 'bookUrl'));
     }
 
     public function edit(Book $book): View
@@ -93,6 +104,8 @@ class BookController extends Controller
             $this->deleteStoredCover($oldCoverImage);
         }
 
+        app(ActivityLogService::class)->log('book.updated', "แก้ไขหนังสือ: {$book->title}", $book, ['title' => $book->title]);
+
         return redirect()->route('books.index')->with('success', 'แก้ไขข้อมูลหนังสือเรียบร้อยแล้ว');
     }
 
@@ -102,9 +115,18 @@ class BookController extends Controller
             return back()->with('error', 'ไม่สามารถลบหนังสือที่มีประวัติการยืมได้');
         }
 
+        app(ActivityLogService::class)->log('book.deleted', "ลบหนังสือ: {$book->title}", null, ['title' => $book->title, 'id' => $book->id]);
+
         $book->delete();
 
         return redirect()->route('books.index')->with('success', 'ลบหนังสือเรียบร้อยแล้ว');
+    }
+
+    public function qr(Book $book): View
+    {
+        $bookUrl = route('books.show', $book);
+
+        return view('books.qr', compact('book', 'bookUrl'));
     }
 
     private function deleteStoredCover(?string $coverImage): void

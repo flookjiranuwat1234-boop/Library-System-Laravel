@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
     <head>
         <meta charset="utf-8">
@@ -55,6 +55,7 @@
                         @if (Route::has('register'))
                             <a href="{{ route('register') }}" class="rounded-xl border border-slate-300 bg-white px-6 py-3 text-base font-semibold text-slate-700 shadow-sm transition hover:border-emerald-400 hover:text-emerald-700">สร้างบัญชีใหม่</a>
                         @endif
+                        <a href="{{ route('catalog.index') }}" class="rounded-xl border border-emerald-300 bg-emerald-50 px-6 py-3 text-base font-semibold text-emerald-700 shadow-sm transition hover:bg-emerald-100">📚 ดูหนังสือทั้งหมด</a>
                     </div>
 
                     <div class="grid max-w-lg gap-4 sm:grid-cols-3">

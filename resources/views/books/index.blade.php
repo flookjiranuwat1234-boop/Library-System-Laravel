@@ -13,6 +13,19 @@
                     <label class="sr-only" for="category">หมวดหมู่</label><select @change="update" id="category" name="category" class="form-control border-0 bg-slate-50 shadow-none"><option value="">ทุกหมวดหมู่</option>@foreach($categories as $category)<option value="{{ $category->id }}" @selected($categoryId === $category->id)>{{ $category->name }}</option>@endforeach</select>
                     <button type="submit" class="button-primary gap-2 px-6"><svg x-show="loading" class="h-4 w-4 animate-spin" viewBox="0 0 24 24" fill="none"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path></svg><span x-text="loading ? 'กำลังค้นหา' : 'ค้นหา'">ค้นหา</span></button>
                 </form>
+
+                {{-- Advanced Search --}}
+                <details class="mt-3 text-sm" @if($publisher || $year || $isbn) open @endif>
+                    <summary class="cursor-pointer text-emerald-200 hover:text-white">▸ ค้นหาขั้นสูง (ISBN / สำนักพิมพ์ / ปีพิมพ์)</summary>
+                    <form method="GET" action="{{ route('books.index') }}" class="mt-3 grid gap-3 rounded-2xl bg-white/10 p-4 backdrop-blur sm:grid-cols-3">
+                        <input type="hidden" name="search" value="{{ $search }}">
+                        <input type="hidden" name="category" value="{{ $categoryId ?: '' }}">
+                        <div><label class="block text-xs font-semibold text-emerald-100 mb-1">ISBN</label><input type="text" name="isbn" value="{{ $isbn }}" placeholder="เช่น 9789740216..." class="form-control border-0 bg-white/90 text-slate-800 shadow-none text-sm"></div>
+                        <div><label class="block text-xs font-semibold text-emerald-100 mb-1">สำนักพิมพ์</label><input type="text" name="publisher" value="{{ $publisher }}" placeholder="ชื่อสำนักพิมพ์..." class="form-control border-0 bg-white/90 text-slate-800 shadow-none text-sm"></div>
+                        <div><label class="block text-xs font-semibold text-emerald-100 mb-1">ปีพิมพ์</label><input type="number" name="year" value="{{ $year ?: '' }}" placeholder="เช่น 2566" min="1000" max="{{ date('Y') + 1 }}" class="form-control border-0 bg-white/90 text-slate-800 shadow-none text-sm"></div>
+                        <div class="sm:col-span-3 flex gap-2"><button type="submit" class="button-primary text-sm px-5">ค้นหาขั้นสูง</button>@if($publisher || $year || $isbn)<a href="{{ route('books.index') }}" class="button-secondary text-sm px-5">ล้าง</a>@endif</div>
+                    </form>
+                </details>
             </div>
         </section>
 
@@ -26,7 +39,8 @@
                         <span class="status-badge absolute right-3 top-3 shadow-sm {{ $book->stock > 0 ? 'bg-white/95 text-emerald-700' : 'bg-rose-600 text-white' }}">{{ $book->stock > 0 ? 'พร้อมยืม '.$book->stock : 'ถูกยืมหมด' }}</span>
                     </a>
                     <div class="flex flex-1 flex-col p-4"><span class="text-xs font-semibold text-emerald-600">{{ $book->category->name ?? 'ไม่ระบุหมวดหมู่' }}</span><a href="{{ route('books.show', $book) }}" class="mt-1 line-clamp-2 font-bold leading-snug text-slate-900 group-hover:text-emerald-700">{{ $book->title }}</a><p class="mt-1 truncate text-sm text-slate-500">{{ $book->author }}</p>
-                        <div class="mt-auto flex items-center justify-between gap-2 pt-4"><a href="{{ route('books.show', $book) }}" class="text-sm font-semibold text-emerald-600 hover:text-emerald-800">ดูรายละเอียด →</a>@if(Auth::user()->role === 'admin')<div class="flex gap-2"><a href="{{ route('books.edit', $book) }}" class="text-xs font-semibold text-sky-600">แก้ไข</a><form action="{{ route('books.destroy', $book) }}" method="POST" onsubmit="return confirm('ยืนยันการลบหนังสือเล่มนี้หรือไม่?');">@csrf @method('DELETE')<button class="text-xs font-semibold text-rose-600">ลบ</button></form></div>@endif</div>
+                        @if($book->isbn)<p class="mt-0.5 truncate text-xs text-slate-400">ISBN: {{ $book->isbn }}</p>@endif
+                        <div class="mt-auto flex items-center justify-between gap-2 pt-4"><a href="{{ route('books.show', $book) }}" class="text-sm font-semibold text-emerald-600 hover:text-emerald-800">ดูรายละเอียด →</a>@if(Auth::user()->role === 'admin')<div class="flex gap-2"><a href="{{ route('books.qr', $book) }}" class="text-xs font-semibold text-violet-600" target="_blank" title="QR Code">QR</a><a href="{{ route('books.edit', $book) }}" class="text-xs font-semibold text-sky-600">แก้ไข</a><form action="{{ route('books.destroy', $book) }}" method="POST" onsubmit="return confirm('ยืนยันการลบหนังสือเล่มนี้หรือไม่?');">@csrf @method('DELETE')<button class="text-xs font-semibold text-rose-600">ลบ</button></form></div>@endif</div>
                     </div>
                 </article>
             @empty

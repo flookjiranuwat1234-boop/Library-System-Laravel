@@ -6,6 +6,7 @@ use App\Models\Book;
 use App\Models\BorrowRecord;
 use App\Models\User;
 use App\Notifications\NewBorrowRequestNotification;
+use App\Services\ActivityLogService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -69,6 +70,8 @@ class BorrowRecordController extends Controller
         $administrators = User::query()->where('role', 'admin')->get();
         Notification::send($administrators, new NewBorrowRequestNotification($result));
 
+        app(ActivityLogService::class)->log('borrow.requested', "ส่งคำขอยืม: {$result->book->title}", $result);
+
         return redirect()->route('borrows.index')->with('success', 'ส่งคำขอยืมแล้ว กรุณารอผู้ดูแลอนุมัติ');
     }
 
@@ -107,6 +110,9 @@ class BorrowRecordController extends Controller
             return back()->with('error', 'คำขอนี้ได้รับการดำเนินการแล้ว');
         }
 
+        $borrow->load('book');
+        app(ActivityLogService::class)->log('borrow.approved', "อนุมัติการยืม: {$borrow->book->title}", $borrow);
+
         return back()->with('success', 'อนุมัติคำขอยืมเรียบร้อยแล้ว');
     }
 
@@ -124,6 +130,9 @@ class BorrowRecordController extends Controller
         if ($rejected === 0) {
             return back()->with('error', 'คำขอนี้ได้รับการดำเนินการแล้ว');
         }
+
+        $borrow->load('book');
+        app(ActivityLogService::class)->log('borrow.rejected', "ปฏิเสธการยืม: {$borrow->book->title}", $borrow);
 
         return back()->with('success', 'ปฏิเสธคำขอยืมเรียบร้อยแล้ว');
     }
@@ -151,6 +160,35 @@ class BorrowRecordController extends Controller
             return back()->with('error', 'หนังสือรายการนี้ถูกคืนแล้ว');
         }
 
+        $borrow->load('book');
+        app(ActivityLogService::class)->log('borrow.returned', "บันทึกการคืน: {$borrow->book->title}", $borrow);
+
         return back()->with('success', 'บันทึกการคืนหนังสือเรียบร้อยแล้ว');
+    }
+
+    public function renew(BorrowRecord $borrow): RedirectResponse
+    {
+        /** @var User $user */
+        $user = Auth::user();
+
+        // ผู้ใช้ทั่วไปต่ออายุได้เฉพาะรายการของตัวเอง
+        if ($user->role !== 'admin' && $borrow->user_id !== $user->id) {
+            abort(403);
+        }
+
+        if (! $borrow->canRenew()) {
+            return back()->with('error', 'ไม่สามารถต่ออายุได้ (สถานะไม่ถูกต้องหรือต่ออายุครบ 2 ครั้งแล้ว)');
+        }
+
+        $borrow->update([
+            'due_date' => $borrow->due_date->addDays(7),
+            'renew_count' => $borrow->renew_count + 1,
+            'status' => 'borrowed',
+        ]);
+
+        $borrow->load('book');
+        app(ActivityLogService::class)->log('borrow.renewed', "ต่ออายุการยืม: {$borrow->book->title} (ครั้งที่ {$borrow->renew_count})", $borrow);
+
+        return back()->with('success', "ต่ออายุการยืมเรียบร้อยแล้ว กำหนดคืนใหม่: {$borrow->due_date->locale('th')->translatedFormat('j M Y')}");
     }
 }
