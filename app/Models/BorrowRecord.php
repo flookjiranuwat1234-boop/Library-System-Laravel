@@ -2,9 +2,12 @@
 
 namespace App\Models;
 
+use App\Observers\BorrowRecordObserver;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+#[ObservedBy([BorrowRecordObserver::class])]
 class BorrowRecord extends Model
 {
     protected $fillable = [

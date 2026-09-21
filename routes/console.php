@@ -19,3 +19,9 @@ Schedule::command('library:backup')
     ->timezone('Asia/Bangkok')
     ->withoutOverlapping(60)
     ->onOneServer();
+
+Schedule::command('library:recalculate-journey')
+    ->dailyAt('03:00')
+    ->timezone('Asia/Bangkok')
+    ->withoutOverlapping(30)
+    ->onOneServer();

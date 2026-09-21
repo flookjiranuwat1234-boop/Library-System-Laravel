@@ -235,12 +235,12 @@
                 <div class="p-6 border-b border-gray-200">
                     <h3 class="text-lg font-semibold text-gray-900">เมนูลัด</h3>
                 </div>
-                <div class="p-6 grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="p-6 grid grid-cols-1 md:grid-cols-5 gap-4">
                     <a href="{{ route('books.create') }}" class="button-primary py-3">
                         <svg class="h-5 w-5 me-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
                         </svg>
-                        เพิ่มหนังสือใหม่
+                        เพิ่มหนังสือ
                     </a>
                     <a href="{{ route('categories.create') }}" class="inline-flex items-center justify-center rounded-xl bg-sky-600 px-4 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-sky-700">
                         <svg class="h-5 w-5 me-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -253,6 +253,12 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
                         </svg>
                         จัดการยืม–คืน
+                    </a>
+                    <a href="{{ route('admin.journey.index') }}" class="inline-flex items-center justify-center rounded-xl bg-indigo-600 px-4 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-indigo-700">
+                        📊 สถิตินักอ่าน
+                    </a>
+                    <a href="{{ route('admin.badges.index') }}" class="inline-flex items-center justify-center rounded-xl bg-amber-500 px-4 py-3 text-sm font-semibold text-slate-950 shadow-sm transition hover:bg-amber-400">
+                        🏆 จัดการเหรียญ
                     </a>
                 </div>
             </div>

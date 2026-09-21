@@ -100,5 +100,8 @@ class DatabaseSeeder extends Seeder
                 'due_date' => now()->subDays(2),
             ]
         );
+
+        $this->call(BadgeSeeder::class);
+        $this->call(JourneyHistorySeeder::class);
     }
 }

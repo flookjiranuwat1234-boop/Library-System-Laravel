@@ -19,7 +19,7 @@ class BookFactory extends Factory
             'category_id' => Category::factory(),
             'title' => $this->faker->sentence(3),
             'author' => $this->faker->name(),
-            'cover_image' => 'https://images.unsplash.com/' . urlencode('photo-1512820790803-83ca734da794?auto=format&fit=crop&w=300&q=80'),
+            'cover_image' => 'https://images.unsplash.com/'.urlencode('photo-1512820790803-83ca734da794?auto=format&fit=crop&w=300&q=80'),
             'description' => $this->faker->paragraph(),
             'stock' => $this->faker->numberBetween(1, 10),
         ];

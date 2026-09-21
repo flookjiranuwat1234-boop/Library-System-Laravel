@@ -1,6 +1,8 @@
 <?php
 
+use App\Http\Controllers\Admin\BadgeAdminController;
 use App\Http\Controllers\Admin\NotificationController;
+use App\Http\Controllers\Admin\ReadingJourneyAdminController;
 use App\Http\Controllers\Admin\ReportController;
 use App\Http\Controllers\Admin\SettingsController;
 use App\Http\Controllers\AdminDashboardController;
@@ -8,10 +10,12 @@ use App\Http\Controllers\BookController;
 use App\Http\Controllers\BorrowRecordController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\ReadingJourneyController;
 use App\Http\Middleware\AdminMiddleware;
 use App\Models\Book;
 use App\Models\BorrowRecord;
 use App\Models\Category;
+use App\Services\ReadingJourneyService;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -30,6 +34,19 @@ Route::get('/', function () {
 Route::get('/dashboard', function () {
     $user = request()->user();
 
+    if ($user->role === 'admin') {
+        return redirect()->route('admin.dashboard');
+    }
+
+    if ($user->readingStat === null) {
+        app(ReadingJourneyService::class)->recalculateFor($user);
+        app(ReadingJourneyService::class)->syncBadgesFor($user);
+        $user->unsetRelation('readingStat');
+        $user->unsetRelation('badges');
+    }
+
+    $user->loadMissing(['readingStat', 'badges']);
+
     return view('dashboard', [
         'totalBooks' => Book::count(),
         'availableBooks' => Book::where('stock', '>', 0)->count(),
@@ -45,6 +62,8 @@ Route::get('/dashboard', function () {
             ->orderBy('due_date')
             ->take(4)
             ->get(),
+        'readingStat' => $user->readingStat,
+        'recentBadges' => $user->badges()->latest('user_badges.unlocked_at')->take(3)->get(),
     ]);
 })->middleware(['auth', 'verified'])->name('dashboard');
 
@@ -57,6 +76,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/books/{book}', [BookController::class, 'show'])->whereNumber('book')->name('books.show');
     Route::get('/borrows', [BorrowRecordController::class, 'index'])->name('borrows.index');
     Route::post('/borrows', [BorrowRecordController::class, 'store'])->name('borrows.store');
+    Route::get('/journey', [ReadingJourneyController::class, 'index'])->name('journey.index');
 
     // Admin Routes
     Route::middleware([AdminMiddleware::class])->group(function () {
@@ -74,6 +94,19 @@ Route::middleware('auth')->group(function () {
         Route::get('/admin/reports', [ReportController::class, 'index'])->name('admin.reports.index');
         Route::get('/admin/reports/print', [ReportController::class, 'print'])->name('admin.reports.print');
         Route::get('/admin/reports/csv', [ReportController::class, 'csv'])->name('admin.reports.csv');
+
+        // Reading Journey & Badges Management
+        Route::get('/admin/journey', [ReadingJourneyAdminController::class, 'index'])->name('admin.journey.index');
+        Route::get('/admin/journey/{user}', [ReadingJourneyAdminController::class, 'show'])->name('admin.journey.show');
+        Route::post('/admin/journey/recalculate-all', [ReadingJourneyAdminController::class, 'recalculateAll'])->name('admin.journey.recalculate-all');
+        Route::post('/admin/journey/{user}/recalculate', [ReadingJourneyAdminController::class, 'recalculate'])->name('admin.journey.recalculate');
+        Route::post('/admin/journey/{user}/award-badge', [ReadingJourneyAdminController::class, 'awardBadge'])->name('admin.journey.award-badge');
+        Route::delete('/admin/journey/{user}/revoke-badge/{badge}', [ReadingJourneyAdminController::class, 'revokeBadge'])->name('admin.journey.revoke-badge');
+        Route::post('/admin/journey/{user}/adjust-points', [ReadingJourneyAdminController::class, 'adjustPoints'])->name('admin.journey.adjust-points');
+
+        Route::resource('admin/badges', BadgeAdminController::class, [
+            'as' => 'admin',
+        ]);
     });
 });
 

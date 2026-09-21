@@ -33,6 +33,18 @@
                     <x-nav-link :href="route('borrows.index')" :active="request()->routeIs('borrows.*')">
                         {{ Auth::user()->role === 'admin' ? __('Borrow Records') : __('My Borrows') }}
                     </x-nav-link>
+                    @if(Auth::user()->role === 'admin')
+                    <x-nav-link :href="route('admin.journey.index')" :active="request()->routeIs('admin.journey.*')">
+                        {{ __('สถิตินักอ่าน') }}
+                    </x-nav-link>
+                    <x-nav-link :href="route('admin.badges.index')" :active="request()->routeIs('admin.badges.*')">
+                        {{ __('จัดการเหรียญ') }}
+                    </x-nav-link>
+                    @else
+                    <x-nav-link :href="route('journey.index')" :active="request()->routeIs('journey.*')">
+                        {{ __('เส้นทางการอ่าน') }}
+                    </x-nav-link>
+                    @endif
                 </div>
             </div>
 
@@ -115,6 +127,11 @@
             <x-responsive-nav-link :href="route('borrows.index')" :active="request()->routeIs('borrows.*')">
                 {{ Auth::user()->role === 'admin' ? __('Borrow Records') : __('My Borrows') }}
             </x-responsive-nav-link>
+            @if(Auth::user()->role !== 'admin')
+            <x-responsive-nav-link :href="route('journey.index')" :active="request()->routeIs('journey.*')">
+                {{ __('เส้นทางการอ่าน') }}
+            </x-responsive-nav-link>
+            @endif
         </div>
 
         <!-- Responsive Settings Options -->
