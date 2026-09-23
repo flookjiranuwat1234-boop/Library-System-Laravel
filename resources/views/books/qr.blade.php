@@ -12,9 +12,11 @@
         .label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.2em; color: #6b7280; margin-bottom: 4px; }
         h1 { font-size: 18px; font-weight: 700; color: #111827; line-height: 1.3; margin-bottom: 4px; }
         .author { font-size: 13px; color: #6b7280; margin-bottom: 24px; }
-        #qr-canvas { margin: 0 auto 20px; display: block; }
+        .qr-wrapper { display: flex; justify-content: center; margin-bottom: 20px; }
+        .qr-wrapper img, .qr-wrapper canvas { display: block; border-radius: 12px; max-width: 100%; height: auto; }
         .url { font-size: 10px; color: #9ca3af; word-break: break-all; margin-bottom: 24px; }
-        .print-btn { display: inline-block; background: #059669; color: white; padding: 10px 28px; border-radius: 10px; font-size: 14px; font-weight: 600; cursor: pointer; border: none; }
+        .print-btn { display: inline-block; background: #059669; color: white; padding: 10px 28px; border-radius: 10px; font-size: 14px; font-weight: 600; cursor: pointer; border: none; transition: background 0.2s; }
+        .print-btn:hover { background: #047857; }
         @media print { .print-btn { display: none; } body { background: white; } .card { box-shadow: none; } }
     </style>
 </head>
@@ -24,17 +26,35 @@
         <p class="label">ห้องสมุด · QR Code</p>
         <h1>{{ $book->title }}</h1>
         <p class="author">{{ $book->author }}@if($book->year) · {{ $book->year }}@endif</p>
-        <canvas id="qr-canvas"></canvas>
+        
+        <div class="qr-wrapper">
+            <canvas id="qr-canvas" style="display:none;"></canvas>
+            <img id="qr-img" src="https://api.qrserver.com/v1/create-qr-code/?size=240x240&data={{ urlencode($bookUrl) }}&color=065f46" alt="QR Code" width="240" height="240">
+        </div>
+
         <p class="url">{{ $bookUrl }}</p>
         <button class="print-btn" onclick="window.print()">🖨️ พิมพ์ QR Code</button>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <script>
-        QRCode.toCanvas(document.getElementById('qr-canvas'), '{{ $bookUrl }}', {
-            width: 240,
-            margin: 2,
-            color: { dark: '#065f46', light: '#ffffff' }
+        document.addEventListener('DOMContentLoaded', function() {
+            try {
+                if (typeof QRCode !== 'undefined') {
+                    const container = document.querySelector('.qr-wrapper');
+                    container.innerHTML = '';
+                    new QRCode(container, {
+                        text: @json($bookUrl),
+                        width: 240,
+                        height: 240,
+                        colorDark: "#065f46",
+                        colorLight: "#ffffff",
+                        correctLevel: QRCode.CorrectLevel.H
+                    });
+                }
+            } catch (e) {
+                console.error("QRCode JS failed, falling back to QR API:", e);
+            }
         });
     </script>
 </body>

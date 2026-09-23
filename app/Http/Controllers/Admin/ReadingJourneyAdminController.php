@@ -47,11 +47,13 @@ class ReadingJourneyAdminController extends Controller
         $totalPointsIssued = ReadingStat::sum('total_points') ?? 0;
         $totalBooksRead = ReadingStat::sum('total_books_read') ?? 0;
         $totalBadgesUnlocked = DB::table('user_badges')->count();
-        $totalBadges = Badge::count();
+        $badges = Badge::withCount('users')->orderBy('sort_order')->get();
+        $totalBadges = $badges->count();
 
         return view('admin.journey.index', [
             'users' => $users,
             'topReaders' => $topReaders,
+            'badges' => $badges,
             'totalReaders' => $totalReaders,
             'totalPointsIssued' => $totalPointsIssued,
             'totalBooksRead' => $totalBooksRead,

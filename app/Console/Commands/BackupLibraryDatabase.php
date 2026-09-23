@@ -8,10 +8,22 @@ use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
-#[Signature('library:backup')]
-#[Description('Create a compressed private backup of library data')]
 class BackupLibraryDatabase extends Command
 {
+    /**
+     * The name and signature of the console command.
+     *
+     * @var string
+     */
+    protected $signature = 'library:backup';
+
+    /**
+     * The console command description.
+     *
+     * @var string
+     */
+    protected $description = 'Create a compressed private backup of library data';
+
     /**
      * Execute the console command.
      */

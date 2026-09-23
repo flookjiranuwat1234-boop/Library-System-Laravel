@@ -10,11 +10,9 @@ use Illuminate\View\View;
 
 class CategoryController extends Controller
 {
-    public function index(): View
+    public function index(): RedirectResponse
     {
-        $categories = Category::query()->withCount('books')->orderBy('name')->get();
-
-        return view('categories.index', compact('categories'));
+        return redirect()->route('books.index');
     }
 
     public function create(): View
@@ -30,7 +28,7 @@ class CategoryController extends Controller
 
         Category::create($validated);
 
-        return redirect()->route('categories.index')->with('success', 'เพิ่มหมวดหมู่เรียบร้อยแล้ว');
+        return back()->with('success', 'เพิ่มหมวดหมู่เรียบร้อยแล้ว');
     }
 
     public function edit(Category $category): View
@@ -46,17 +44,15 @@ class CategoryController extends Controller
 
         $category->update($validated);
 
-        return redirect()->route('categories.index')->with('success', 'แก้ไขหมวดหมู่เรียบร้อยแล้ว');
+        return back()->with('success', 'แก้ไขหมวดหมู่เรียบร้อยแล้ว');
     }
 
     public function destroy(Category $category): RedirectResponse
     {
-        if ($category->books()->exists()) {
-            return back()->with('error', 'ไม่สามารถลบหมวดหมู่ที่ยังมีหนังสืออยู่ได้');
-        }
+        $category->books()->update(['category_id' => null]);
 
         $category->delete();
 
-        return redirect()->route('categories.index')->with('success', 'ลบหมวดหมู่เรียบร้อยแล้ว');
+        return back()->with('success', 'ลบหมวดหมู่เรียบร้อยแล้ว');
     }
 }

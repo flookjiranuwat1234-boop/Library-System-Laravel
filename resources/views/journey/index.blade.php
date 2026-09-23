@@ -33,7 +33,6 @@
                 <div class="relative space-y-6">
                     <div class="flex flex-wrap items-center justify-between gap-4">
                         <div class="inline-flex items-center gap-2 rounded-full border border-emerald-400/30 bg-emerald-500/10 px-4 py-1.5 text-sm font-medium text-emerald-300 backdrop-blur">
-                            <span>✨</span>
                             <span>ระดับ {{ $stat->currentLevel() }} นักอ่านผู้มุ่งมั่น</span>
                         </div>
                         <div class="text-sm font-semibold text-emerald-400">
@@ -45,7 +44,9 @@
                     <div class="grid grid-cols-2 gap-4 sm:grid-cols-4 sm:gap-6">
                         <div class="rounded-2xl border border-white/10 bg-white/5 p-4 sm:p-5 backdrop-blur transition hover:bg-white/10">
                             <div class="flex items-center gap-3">
-                                <span class="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-500/20 text-xl text-emerald-400">📚</span>
+                                <span class="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-500/20 text-emerald-400">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
+                                </span>
                                 <span class="text-xs sm:text-sm font-medium text-slate-300">อ่านจบแล้ว</span>
                             </div>
                             <p class="mt-3 text-2xl sm:text-3xl font-bold tracking-tight text-white" x-data="journeyCounter({{ $stat->total_books_read }})" x-text="displayValue">
@@ -56,7 +57,9 @@
 
                         <div class="rounded-2xl border border-white/10 bg-white/5 p-4 sm:p-5 backdrop-blur transition hover:bg-white/10">
                             <div class="flex items-center gap-3">
-                                <span class="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-500/20 text-xl text-amber-400">⭐</span>
+                                <span class="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-500/20 text-amber-400">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"/></svg>
+                                </span>
                                 <span class="text-xs sm:text-sm font-medium text-slate-300">แต้มความสำเร็จ</span>
                             </div>
                             <p class="mt-3 text-2xl sm:text-3xl font-bold tracking-tight text-white" x-data="journeyCounter({{ $stat->total_points }})" x-text="displayValue">
@@ -67,7 +70,9 @@
 
                         <div class="rounded-2xl border border-white/10 bg-white/5 p-4 sm:p-5 backdrop-blur transition hover:bg-white/10">
                             <div class="flex items-center gap-3">
-                                <span class="flex h-10 w-10 items-center justify-center rounded-xl bg-purple-500/20 text-xl text-purple-400">🏆</span>
+                                <span class="flex h-10 w-10 items-center justify-center rounded-xl bg-purple-500/20 text-purple-400">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/></svg>
+                                </span>
                                 <span class="text-xs sm:text-sm font-medium text-slate-300">ตราที่ได้รับ</span>
                             </div>
                             <p class="mt-3 text-2xl sm:text-3xl font-bold tracking-tight text-white" x-data="journeyCounter({{ count($unlockedBadges) }})" x-text="displayValue">
@@ -78,7 +83,9 @@
 
                         <div class="rounded-2xl border border-white/10 bg-white/5 p-4 sm:p-5 backdrop-blur transition hover:bg-white/10">
                             <div class="flex items-center gap-3">
-                                <span class="flex h-10 w-10 items-center justify-center rounded-xl bg-rose-500/20 text-xl text-rose-400">🔥</span>
+                                <span class="flex h-10 w-10 items-center justify-center rounded-xl bg-rose-500/20 text-rose-400">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                                </span>
                                 <span class="text-xs sm:text-sm font-medium text-slate-300">อ่านต่อเนื่อง</span>
                             </div>
                             <p class="mt-3 text-2xl sm:text-3xl font-bold tracking-tight text-white" x-data="journeyCounter({{ $stat->current_streak }})" x-text="displayValue">
@@ -151,16 +158,16 @@
                         @foreach($shelves as $shelfIndex => $shelfBooks)
                             <div class="relative pt-4">
                                 <!-- Books Row with No Ugly Scrollbars ([scrollbar-width:none] [&::-webkit-scrollbar]:hidden) -->
-                                <div class="flex items-end gap-1.5 sm:gap-2.5 px-4 sm:px-8 overflow-x-auto overflow-y-visible pt-8 pb-0 min-h-[185px] relative z-10 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
+                                <div class="flex items-end gap-1.5 sm:gap-2.5 px-4 sm:px-8 overflow-x-auto overflow-y-visible pt-8 pb-0 min-h-[185px] relative z-10 -mb-1.5 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
                                     
                                     <!-- Left Shelf Bookend Prop -->
                                     @if($shelfIndex === 0)
-                                        <div class="shrink-0 flex flex-col items-center justify-end pb-1 pr-2 select-none pointer-events-none opacity-90">
-                                            <span class="text-3xl filter drop-shadow-[0_4px_6px_rgba(0,0,0,0.2)]">🪴</span>
+                                        <div class="shrink-0 flex items-end justify-center pb-0 pr-2 select-none pointer-events-none opacity-90 leading-none">
+                                            <span class="text-3xl filter drop-shadow-[0_4px_6px_rgba(0,0,0,0.2)] translate-y-1">🪴</span>
                                         </div>
                                     @elseif($shelfIndex === 1)
-                                        <div class="shrink-0 flex flex-col items-center justify-end pb-1 pr-2 select-none pointer-events-none opacity-90">
-                                            <span class="text-3xl filter drop-shadow-[0_4px_6px_rgba(0,0,0,0.2)]">🕰️</span>
+                                        <div class="shrink-0 flex items-end justify-center pb-0 pr-2 select-none pointer-events-none opacity-90 leading-none">
+                                            <span class="text-3xl filter drop-shadow-[0_4px_6px_rgba(0,0,0,0.2)] translate-y-1">🕰️</span>
                                         </div>
                                     @endif
 
@@ -175,7 +182,7 @@
                                             type="button"
                                             @click="openBookModal({{ json_encode($book) }}, {{ json_encode($record) }}, {{ json_encode($theme) }})"
                                             class="group relative shrink-0 cursor-pointer text-left transition-all duration-300 hover:-translate-y-3 hover:scale-105 hover:z-30 focus:outline-none focus:ring-2 focus:ring-amber-500 rounded-t-sm"
-                                            style="height: {{ $item['height'] }}px; width: {{ $item['width'] }}px; transform: rotate({{ $item['tilt'] }}deg);"
+                                            style="height: {{ $item['height'] }}px; width: {{ $item['width'] }}px; transform: rotate({{ $item['tilt'] }}deg); transform-origin: bottom center;"
                                             title="{{ $book->title }} โดย {{ $book->author }}"
                                         >
                                             <!-- Spine Body with 3D Curvature & Embossing -->
@@ -209,7 +216,7 @@
                                             <!-- Hanging Bookmark Ribbon -->
                                             @if($item['has_ribbon'])
                                                 <div
-                                                    class="absolute -bottom-2.5 left-1/2 -translate-x-1/2 w-2 h-3.5 rounded-b-sm shadow-sm pointer-events-none z-20"
+                                                    class="absolute bottom-0 left-1/2 -translate-x-1/2 w-2 h-3 rounded-b-sm shadow-xs pointer-events-none z-20"
                                                     style="background: {{ $theme['ribbon_color'] }}; clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 50% 75%, 0% 100%);"
                                                 ></div>
                                             @endif
@@ -218,12 +225,12 @@
 
                                     <!-- Right Shelf Bookend Prop -->
                                     @if($shelfIndex === 0)
-                                        <div class="shrink-0 flex flex-col items-center justify-end pb-1 pl-2 select-none pointer-events-none opacity-90">
-                                            <span class="text-3xl filter drop-shadow-[0_4px_6px_rgba(0,0,0,0.2)]">🏆</span>
+                                        <div class="shrink-0 flex items-end justify-center pb-0 pl-2 select-none pointer-events-none opacity-90 leading-none">
+                                            <span class="text-3xl filter drop-shadow-[0_4px_6px_rgba(0,0,0,0.2)] translate-y-1">🏆</span>
                                         </div>
                                     @elseif($shelfIndex === 1)
-                                        <div class="shrink-0 flex flex-col items-center justify-end pb-1 pl-2 select-none pointer-events-none opacity-90">
-                                            <span class="text-3xl filter drop-shadow-[0_4px_6px_rgba(0,0,0,0.2)]">☕</span>
+                                        <div class="shrink-0 flex items-end justify-center pb-0 pl-2 select-none pointer-events-none opacity-90 leading-none">
+                                            <span class="text-3xl filter drop-shadow-[0_4px_6px_rgba(0,0,0,0.2)] translate-y-1">🕯️</span>
                                         </div>
                                     @endif
                                 </div>

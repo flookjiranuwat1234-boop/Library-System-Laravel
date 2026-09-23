@@ -45,6 +45,25 @@ class AdminDashboardController extends Controller
             ->where('stock', '<=', $lowStockThreshold)
             ->get();
 
+        // Top categories with book counts
+        $topCategories = Category::withCount('books')
+            ->orderByDesc('books_count')
+            ->take(5)
+            ->get();
+
+        // Popular books with highest borrow count
+        $popularBooks = Book::withCount('borrowRecords')
+            ->with('category')
+            ->orderByDesc('borrow_records_count')
+            ->take(4)
+            ->get();
+
+        // Latest added books
+        $latestBooks = Book::with('category')
+            ->latest()
+            ->take(4)
+            ->get();
+
         return view('admin.dashboard', [
             'totalBooks' => $totalBooks,
             'totalMembers' => $totalMembers,
@@ -56,6 +75,9 @@ class AdminDashboardController extends Controller
             'recentReturns' => $recentReturns,
             'overdueBooks' => $overdueBooks,
             'lowStockBooks' => $lowStockBooks,
+            'topCategories' => $topCategories,
+            'popularBooks' => $popularBooks,
+            'latestBooks' => $latestBooks,
         ]);
     }
 }

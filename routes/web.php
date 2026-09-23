@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\NotificationController;
 use App\Http\Controllers\Admin\ReadingJourneyAdminController;
 use App\Http\Controllers\Admin\ReportController;
 use App\Http\Controllers\Admin\SettingsController;
+use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\AdminDashboardController;
 use App\Http\Controllers\BookController;
 use App\Http\Controllers\BorrowRecordController;
@@ -112,6 +113,9 @@ Route::middleware('auth')->group(function () {
         Route::delete('/admin/journey/{user}/revoke-badge/{badge}', [ReadingJourneyAdminController::class, 'revokeBadge'])->name('admin.journey.revoke-badge');
         Route::post('/admin/journey/{user}/adjust-points', [ReadingJourneyAdminController::class, 'adjustPoints'])->name('admin.journey.adjust-points');
 
+        Route::resource('admin/users', UserController::class, [
+            'as' => 'admin',
+        ]);
         Route::resource('admin/badges', BadgeAdminController::class, [
             'as' => 'admin',
         ]);

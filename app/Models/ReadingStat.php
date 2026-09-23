@@ -22,6 +22,18 @@ class ReadingStat extends Model
 {
     use HasFactory;
 
+    protected $fillable = [
+        'user_id',
+        'total_books_read',
+        'total_points',
+        'current_streak',
+        'longest_streak',
+        'on_time_returns',
+        'late_returns',
+        'categories_explored',
+        'last_calculated_at',
+    ];
+
     /**
      * @return array<string, string>
      */

@@ -28,7 +28,7 @@ class CatalogController extends Controller
             ->when($publisher !== '', fn ($query) => $query->where('publisher', 'like', "%{$publisher}%"))
             ->when($year > 0, fn ($query) => $query->where('year', $year))
             ->orderBy('title')
-            ->paginate(12)
+            ->paginate(10)
             ->withQueryString();
 
         $categories = Category::query()->orderBy('name')->get();

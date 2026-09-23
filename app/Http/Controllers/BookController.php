@@ -5,7 +5,9 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreBookRequest;
 use App\Http\Requests\UpdateBookRequest;
 use App\Models\Book;
+use App\Models\BorrowRecord;
 use App\Models\Category;
+use App\Models\User;
 use App\Services\ActivityLogService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -35,10 +37,10 @@ class BookController extends Controller
             ->when($year > 0, fn ($query) => $query->where('year', $year))
             ->when($isbn !== '', fn ($query) => $query->where('isbn', 'like', "%{$isbn}%"))
             ->orderBy('title')
-            ->paginate(12)
+            ->paginate(10)
             ->withQueryString();
 
-        $categories = Category::query()->orderBy('name')->get();
+        $categories = Category::query()->withCount('books')->orderBy('name')->get();
 
         return view('books.index', compact('books', 'categories', 'search', 'categoryId', 'publisher', 'year', 'isbn'));
     }
@@ -75,9 +77,17 @@ class BookController extends Controller
             ->latest()
             ->first();
 
+        $activeBorrows = BorrowRecord::with('user')
+            ->whereBelongsTo($book)
+            ->whereIn('status', ['pending', 'borrowed', 'overdue'])
+            ->latest()
+            ->get();
+
+        $members = User::where('role', 'user')->orderBy('name')->get();
+
         $bookUrl = route('books.show', $book);
 
-        return view('books.show', compact('book', 'currentBorrow', 'bookUrl'));
+        return view('books.show', compact('book', 'currentBorrow', 'activeBorrows', 'members', 'bookUrl'));
     }
 
     public function edit(Book $book): View

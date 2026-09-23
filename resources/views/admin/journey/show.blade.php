@@ -2,8 +2,8 @@
     <x-slot name="header">
         <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div class="flex items-center gap-4">
-                <a href="{{ route('admin.journey.index') }}" class="rounded-xl border border-slate-200 bg-white p-2 text-slate-600 hover:bg-slate-50 hover:text-slate-900 shadow-sm transition">
-                    ←
+                <a href="{{ route('admin.journey.index') }}" class="rounded-xl border border-slate-200 bg-white p-2 text-slate-600 hover:bg-slate-50 hover:text-slate-900 shadow-sm transition" title="ย้อนกลับ">
+                    <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
                 </a>
                 <div>
                     <h2 class="page-title text-slate-900">
@@ -15,8 +15,9 @@
             <div class="flex items-center gap-3">
                 <form action="{{ route('admin.journey.recalculate', $user) }}" method="POST">
                     @csrf
-                    <button type="submit" class="inline-flex items-center gap-2 rounded-xl bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-700 transition">
-                        🔄 คำนวณแต้มใหม่
+                    <button type="submit" class="inline-flex items-center gap-1.5 rounded-xl bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-700 transition">
+                        <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+                        <span>คำนวณแต้มใหม่</span>
                     </button>
                 </form>
             </div>
@@ -41,28 +42,43 @@
             <!-- User Stats Summary Cards -->
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
                 <div class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-                    <span class="text-xs font-semibold text-slate-500 uppercase">ระดับ (Level)</span>
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs font-semibold text-slate-500 uppercase">ระดับ (Level)</span>
+                        <svg class="h-4 w-4 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                    </div>
                     <div class="mt-2 text-3xl font-extrabold text-indigo-600">Lv. {{ $stat->level }}</div>
                 </div>
 
                 <div class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-                    <span class="text-xs font-semibold text-slate-500 uppercase">แต้มรวม (XP)</span>
-                    <div class="mt-2 text-3xl font-extrabold text-amber-600">⭐ {{ number_format($stat->total_points) }}</div>
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs font-semibold text-slate-500 uppercase">แต้มรวม (XP)</span>
+                        <svg class="h-4 w-4 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"/></svg>
+                    </div>
+                    <div class="mt-2 text-3xl font-extrabold text-amber-600">{{ number_format($stat->total_points) }}</div>
                 </div>
 
                 <div class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-                    <span class="text-xs font-semibold text-slate-500 uppercase">อ่านจบแล้ว</span>
-                    <div class="mt-2 text-3xl font-extrabold text-emerald-600">📖 {{ number_format($stat->total_books_read) }} เล่ม</div>
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs font-semibold text-slate-500 uppercase">อ่านจบแล้ว</span>
+                        <svg class="h-4 w-4 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
+                    </div>
+                    <div class="mt-2 text-3xl font-extrabold text-emerald-600">{{ number_format($stat->total_books_read) }} เล่ม</div>
                 </div>
 
                 <div class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-                    <span class="text-xs font-semibold text-slate-500 uppercase">หมวดหมู่ที่สำรวจ</span>
-                    <div class="mt-2 text-3xl font-extrabold text-cyan-600">🏷️ {{ $stat->categories_explored }} หมวด</div>
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs font-semibold text-slate-500 uppercase">หมวดหมู่ที่สำรวจ</span>
+                        <svg class="h-4 w-4 text-cyan-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 11h.01M7 15h.01M13 7h7M13 11h7M13 15h7M4 6h16a2 2 0 012 2v10a2 2 0 01-2 2H4a2 2 0 01-2-2V8a2 2 0 012-2z"/></svg>
+                    </div>
+                    <div class="mt-2 text-3xl font-extrabold text-cyan-600">{{ $stat->categories_explored }} หมวด</div>
                 </div>
 
                 <div class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-                    <span class="text-xs font-semibold text-slate-500 uppercase">สถิติ Streak</span>
-                    <div class="mt-2 text-3xl font-extrabold text-rose-600">🔥 {{ $stat->current_streak_weeks }} สัปดาห์</div>
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs font-semibold text-slate-500 uppercase">สถิติ STREAK</span>
+                        <svg class="h-4 w-4 text-rose-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 18.657A8 8 0 016.343 7.343S7 9 9 10c0-2 .5-5 2.986-7C14 5 16.09 5.777 17.656 7.343A7.975 7.975 0 0120 13a7.975 7.975 0 01-2.343 5.657z"/></svg>
+                    </div>
+                    <div class="mt-2 text-3xl font-extrabold text-rose-600">{{ $stat->current_streak_weeks }} สัปดาห์</div>
                 </div>
             </div>
 
@@ -72,7 +88,10 @@
                     <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
                         <div class="flex items-center justify-between mb-5">
                             <div>
-                                <h3 class="text-lg font-bold text-slate-900">🎖️ เหรียญรางวัลของสมาชิก (Badges)</h3>
+                                <h3 class="text-lg font-bold text-slate-900 flex items-center gap-2">
+                                    <svg class="h-5 w-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/></svg>
+                                    <span>เหรียญรางวัลของสมาชิก (Badges)</span>
+                                </h3>
                                 <p class="text-xs text-slate-500">ได้รับแล้ว {{ count($userBadgeIds) }} จาก {{ $allBadges->count() }} เหรียญ</p>
                             </div>
                         </div>
@@ -91,8 +110,12 @@
                                 @endphp
                                 <div class="flex items-center justify-between rounded-xl border p-4 transition {{ $isUnlocked ? 'border-amber-300 bg-amber-50/30' : 'border-slate-200 bg-slate-50/50 opacity-60' }}">
                                     <div class="flex items-center gap-3.5 min-w-0 flex-1">
-                                        <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-white text-2xl shadow-xs border border-slate-200">
-                                            {{ $badge->icon }}
+                                        <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-white text-lg shadow-xs border border-slate-200">
+                                            @if(preg_match('/[\x{1F300}-\x{1F6FF}]/u', $badge->icon))
+                                                <svg class="h-6 w-6 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/></svg>
+                                            @else
+                                                <span class="font-bold text-slate-700 text-xs">{{ $badge->icon }}</span>
+                                            @endif
                                         </div>
                                         <div class="min-w-0 flex-1">
                                             <h4 class="font-bold text-slate-900 text-sm truncate">{{ $badge->name_th }}</h4>
@@ -111,7 +134,7 @@
                                                 @csrf
                                                 @method('DELETE')
                                                 <button type="submit" class="inline-flex items-center gap-1 rounded-lg border border-rose-200 bg-white px-3 py-1.5 text-xs font-bold text-rose-600 shadow-xs hover:bg-rose-50 hover:border-rose-300 transition">
-                                                    ✕ ปลดออก
+                                                    <span>ปลดออก</span>
                                                 </button>
                                             </form>
                                         @else
@@ -119,7 +142,7 @@
                                                 @csrf
                                                 <input type="hidden" name="badge_id" value="{{ $badge->id }}">
                                                 <button type="submit" class="inline-flex items-center gap-1 rounded-lg bg-emerald-600 px-3.5 py-1.5 text-xs font-bold text-white shadow-xs hover:bg-emerald-700 transition">
-                                                    + มอบให้
+                                                    <span>+ มอบให้</span>
                                                 </button>
                                             </form>
                                         @endif
@@ -131,7 +154,10 @@
 
                     <!-- Recent Borrow History -->
                     <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-                        <h3 class="text-lg font-bold text-slate-900 mb-4">📚 ประวัติการยืม-คืนล่าสุด</h3>
+                        <h3 class="text-lg font-bold text-slate-900 mb-4 flex items-center gap-2">
+                            <svg class="h-5 w-5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
+                            <span>ประวัติการยืม-คืนล่าสุด</span>
+                        </h3>
                         <div class="space-y-3">
                             @forelse($recentBorrows as $borrow)
                                 <div class="flex items-center justify-between rounded-xl bg-slate-50 border border-slate-200 p-3">
@@ -153,7 +179,10 @@
                 <!-- Right: Manual Points Adjustments -->
                 <div class="space-y-6">
                     <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-                        <h3 class="text-lg font-bold text-slate-900 mb-2">⭐ ปรับปรุงแต้มพิเศษ</h3>
+                        <h3 class="text-lg font-bold text-slate-900 mb-2 flex items-center gap-2">
+                            <svg class="h-5 w-5 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"/></svg>
+                            <span>ปรับปรุงแต้มพิเศษ</span>
+                        </h3>
                         <p class="text-xs text-slate-500 mb-5">เพิ่มหรือหักแต้มสะสม (XP) ของสมาชิกโดยตรง</p>
 
                         <form action="{{ route('admin.journey.adjust-points', $user) }}" method="POST" class="space-y-4">
@@ -176,7 +205,7 @@
                     </div>
 
                     <div class="rounded-2xl border border-indigo-200 bg-indigo-50/50 p-6">
-                        <h4 class="font-bold text-indigo-950 text-sm mb-2">💡 ข้อมูลการคำนวณอัตโนมัติ</h4>
+                        <h4 class="font-bold text-indigo-950 text-sm mb-2">ข้อมูลการคำนวณอัตโนมัติ</h4>
                         <ul class="text-xs text-indigo-900 space-y-1.5 list-disc list-inside">
                             <li>คืนหนังสือสำเร็จ: <strong>+10 XP</strong></li>
                             <li>คืนตรงเวลา: <strong>+5 XP</strong></li>

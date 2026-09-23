@@ -21,6 +21,17 @@ class Badge extends Model
 {
     use HasFactory;
 
+    protected $fillable = [
+        'code',
+        'name_th',
+        'description',
+        'icon',
+        'tier',
+        'condition_type',
+        'condition_value',
+        'sort_order',
+    ];
+
     /**
      * @return array<string, string>
      */

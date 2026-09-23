@@ -8,10 +8,22 @@ use Illuminate\Console\Attributes\Description;
 use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
 
-#[Signature('library:notify-overdue')]
-#[Description('Queue notifications for newly overdue library books')]
 class SendOverdueBookNotifications extends Command
 {
+    /**
+     * The name and signature of the console command.
+     *
+     * @var string
+     */
+    protected $signature = 'library:notify-overdue';
+
+    /**
+     * The console command description.
+     *
+     * @var string
+     */
+    protected $description = 'Queue notifications for newly overdue library books';
+
     /**
      * Execute the console command.
      */

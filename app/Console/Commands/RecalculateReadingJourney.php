@@ -8,10 +8,22 @@ use Illuminate\Console\Attributes\Description;
 use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
 
-#[Signature('library:recalculate-journey {--user= : User ID to recalculate}')]
-#[Description('Recalculate reading journey stats and badges for library users')]
 class RecalculateReadingJourney extends Command
 {
+    /**
+     * The name and signature of the console command.
+     *
+     * @var string
+     */
+    protected $signature = 'library:recalculate-journey {--user= : User ID to recalculate}';
+
+    /**
+     * The console command description.
+     *
+     * @var string
+     */
+    protected $description = 'Recalculate reading journey stats and badges for library users';
+
     /**
      * Execute the console command.
      */

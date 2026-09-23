@@ -16,9 +16,24 @@
         </section>
 
         <section class="grid grid-cols-1 gap-4 sm:grid-cols-3">
-            @foreach([['หนังสือทั้งหมด',$totalBooks,'📚','text-slate-900','bg-slate-100'],['พร้อมให้ยืม',$availableBooks,'✓','text-emerald-700','bg-emerald-100'],['กำลังยืม',$activeBorrowings,'↗','text-sky-700','bg-sky-100']] as [$label,$value,$icon,$color,$background])
-                <div class="panel flex items-center gap-4 p-5 transition hover:-translate-y-0.5 hover:shadow-md"><span class="flex h-12 w-12 items-center justify-center rounded-2xl text-xl {{ $background }} {{ $color }}">{{ $icon }}</span><div><p class="text-sm font-medium text-slate-500">{{ $label }}</p><p class="text-3xl font-bold {{ $color }}">{{ $value }}</p></div></div>
-            @endforeach
+            <div class="panel flex items-center gap-4 p-5 transition hover:-translate-y-0.5 hover:shadow-md">
+                <span class="flex h-12 w-12 items-center justify-center rounded-2xl bg-slate-100 text-slate-700">
+                    <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
+                </span>
+                <div><p class="text-sm font-medium text-slate-500">หนังสือทั้งหมด</p><p class="text-3xl font-bold text-slate-900">{{ $totalBooks }}</p></div>
+            </div>
+            <div class="panel flex items-center gap-4 p-5 transition hover:-translate-y-0.5 hover:shadow-md">
+                <span class="flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-100 text-emerald-700">
+                    <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                </span>
+                <div><p class="text-sm font-medium text-slate-500">พร้อมให้ยืม</p><p class="text-3xl font-bold text-emerald-700">{{ $availableBooks }}</p></div>
+            </div>
+            <div class="panel flex items-center gap-4 p-5 transition hover:-translate-y-0.5 hover:shadow-md">
+                <span class="flex h-12 w-12 items-center justify-center rounded-2xl bg-sky-100 text-sky-700">
+                    <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                </span>
+                <div><p class="text-sm font-medium text-slate-500">กำลังยืม</p><p class="text-3xl font-bold text-sky-700">{{ $activeBorrowings }}</p></div>
+            </div>
         </section>
 
         <div class="grid gap-6 lg:grid-cols-[1.4fr_0.6fr]">

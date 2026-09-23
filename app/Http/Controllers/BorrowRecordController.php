@@ -32,9 +32,33 @@ class BorrowRecordController extends Controller
     {
         $validated = $request->validate([
             'book_id' => ['required', 'integer', 'exists:books,id'],
+            'user_id' => ['nullable', 'integer', 'exists:users,id'],
+            'quick_name' => ['nullable', 'string', 'max:255'],
+            'quick_email' => ['nullable', 'string', 'lowercase', 'email', 'max:255', 'unique:users,email'],
         ]);
 
-        $result = DB::transaction(function () use ($validated): BorrowRecord|string {
+        if (Auth::user()->role === 'admin' && ! empty($validated['quick_name'])) {
+            $email = ! empty($validated['quick_email'])
+                ? $validated['quick_email']
+                : 'user_'.time().'@library.local';
+
+            $newUser = User::create([
+                'name' => $validated['quick_name'],
+                'email' => $email,
+                'password' => bcrypt('password123'),
+                'role' => 'user',
+            ]);
+
+            $validated['user_id'] = $newUser->id;
+        }
+
+        $borrowerId = (Auth::user()->role === 'admin' && ! empty($validated['user_id']))
+            ? (int) $validated['user_id']
+            : Auth::id();
+
+        $isAdminIssue = Auth::user()->role === 'admin' && ! empty($validated['user_id']);
+
+        $result = DB::transaction(function () use ($validated, $borrowerId, $isAdminIssue): BorrowRecord|string {
             $book = Book::query()->lockForUpdate()->findOrFail($validated['book_id']);
 
             if ($book->stock <= 0) {
@@ -42,7 +66,7 @@ class BorrowRecordController extends Controller
             }
 
             $alreadyBorrowed = BorrowRecord::query()
-                ->where('user_id', Auth::id())
+                ->where('user_id', $borrowerId)
                 ->where('book_id', $book->id)
                 ->whereIn('status', ['pending', 'borrowed', 'overdue'])
                 ->exists();
@@ -51,8 +75,22 @@ class BorrowRecordController extends Controller
                 return 'already-borrowed';
             }
 
+            if ($isAdminIssue) {
+                $book->decrement('stock');
+
+                return BorrowRecord::create([
+                    'user_id' => $borrowerId,
+                    'book_id' => $book->id,
+                    'reviewed_by' => Auth::id(),
+                    'reviewed_at' => now(),
+                    'borrowed_at' => today(),
+                    'due_date' => today()->addDays(14),
+                    'status' => 'borrowed',
+                ]);
+            }
+
             return BorrowRecord::create([
-                'user_id' => Auth::id(),
+                'user_id' => $borrowerId,
                 'book_id' => $book->id,
                 'status' => 'pending',
             ]);
@@ -63,16 +101,18 @@ class BorrowRecordController extends Controller
         }
 
         if ($result === 'already-borrowed') {
-            return back()->with('error', 'คุณมีคำขอหรือกำลังยืมหนังสือเล่มนี้อยู่แล้ว');
+            return back()->with('error', 'สมาชิกมีคำขอหรือกำลังยืมหนังสือเล่มนี้อยู่แล้ว');
         }
 
         $result->load(['book', 'user']);
-        $administrators = User::query()->where('role', 'admin')->get();
-        Notification::send($administrators, new NewBorrowRequestNotification($result));
+        if (! $isAdminIssue) {
+            $administrators = User::query()->where('role', 'admin')->get();
+            Notification::send($administrators, new NewBorrowRequestNotification($result));
+        }
 
-        app(ActivityLogService::class)->log('borrow.requested', "ส่งคำขอยืม: {$result->book->title}", $result);
+        app(ActivityLogService::class)->log('borrow.requested', "ยืมหนังสือ: {$result->book->title} (สำหรับ {$result->user->name})", $result);
 
-        return redirect()->route('borrows.index')->with('success', 'ส่งคำขอยืมแล้ว กรุณารอผู้ดูแลอนุมัติ');
+        return back()->with('success', $isAdminIssue ? "บันทึกการยืมหนังสือให้คุณ {$result->user->name} เรียบร้อยแล้ว" : 'ส่งคำขอยืมแล้ว กรุณารอผู้ดูแลอนุมัติ');
     }
 
     public function approve(BorrowRecord $borrow): RedirectResponse

@@ -13,15 +13,15 @@ use Illuminate\Support\Facades\DB;
 
 class ReadingJourneyService
 {
-    public const int POINTS_RETURNED = 10;
+    public const POINTS_RETURNED = 10;
 
-    public const int POINTS_ON_TIME = 5;
+    public const POINTS_ON_TIME = 5;
 
-    public const int POINTS_LATE_PENALTY = 3;
+    public const POINTS_LATE_PENALTY = 3;
 
-    public const int POINTS_PER_CATEGORY = 15;
+    public const POINTS_PER_CATEGORY = 15;
 
-    public const int POINTS_PER_LEVEL = 100;
+    public const POINTS_PER_LEVEL = 100;
 
     /**
      * Recalculate reading statistics for a given user.

@@ -67,7 +67,7 @@
         @guest
         <div class="rounded-2xl border border-emerald-200 bg-emerald-50 px-6 py-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <div>
-                <p class="font-semibold text-emerald-800">📖 อยากยืมหนังสือ?</p>
+                <p class="font-semibold text-emerald-800">อยากยืมหนังสือ?</p>
                 <p class="text-sm text-emerald-700">สมัครสมาชิกฟรีเพื่อส่งคำขอยืมและติดตามสถานะได้ทันที</p>
             </div>
             <div class="flex gap-2 shrink-0">
@@ -86,8 +86,8 @@
             @forelse($books as $book)
                 <article class="group flex flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition duration-300 hover:-translate-y-1 hover:border-emerald-200 hover:shadow-xl hover:shadow-emerald-900/5">
                     <div class="relative aspect-[4/5] overflow-hidden bg-gradient-to-br from-slate-100 to-slate-200">
-                        @if($book->coverImageUrl())<img src="{{ $book->coverImageUrl() }}" alt="{{ $book->title }}" class="h-full w-full object-cover transition duration-500 group-hover:scale-105">@else<div class="flex h-full flex-col items-center justify-center gap-2 text-slate-400"><span class="text-5xl">📘</span></div>@endif
-                        <span class="status-badge absolute right-3 top-3 shadow-sm {{ $book->stock > 0 ? 'bg-white/95 text-emerald-700' : 'bg-rose-600 text-white' }}">{{ $book->stock > 0 ? 'พร้อมยืม' : 'ถูกยืมหมด' }}</span>
+                        @if($book->coverImageUrl())<img src="{{ $book->coverImageUrl() }}" alt="{{ $book->title }}" class="h-full w-full object-cover transition duration-500 group-hover:scale-105">@else<div class="flex h-full flex-col items-center justify-center gap-2 text-slate-400"><svg class="h-10 w-10 stroke-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg></div>@endif
+                        <span class="status-badge absolute right-3 top-3 inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold shadow-md backdrop-blur-md border transition-all {{ $book->stock > 0 ? 'bg-white/95 text-emerald-800 border-emerald-200/80' : 'bg-rose-600/95 text-white border-rose-500/80' }}">{{ $book->stock > 0 ? 'พร้อมยืม' : 'ถูกยืมหมด' }}</span>
                     </div>
                     <div class="flex flex-1 flex-col p-4">
                         <span class="text-xs font-semibold text-emerald-600">{{ $book->category->name ?? 'ไม่ระบุหมวดหมู่' }}</span>

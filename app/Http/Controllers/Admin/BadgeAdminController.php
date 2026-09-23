@@ -10,15 +10,9 @@ use Illuminate\View\View;
 
 class BadgeAdminController extends Controller
 {
-    public function index(): View
+    public function index(): RedirectResponse
     {
-        $badges = Badge::withCount('users')
-            ->orderBy('sort_order')
-            ->get();
-
-        return view('admin.badges.index', [
-            'badges' => $badges,
-        ]);
+        return redirect()->route('admin.journey.index');
     }
 
     public function create(): View
@@ -41,7 +35,7 @@ class BadgeAdminController extends Controller
 
         Badge::create($validated);
 
-        return redirect()->route('admin.badges.index')->with('success', 'สร้างเหรียญรางวัลใหม่เรียบร้อยแล้ว');
+        return redirect()->route('admin.journey.index')->with('success', 'สร้างเหรียญรางวัลใหม่เรียบร้อยแล้ว');
     }
 
     public function edit(Badge $badge): View
@@ -66,7 +60,7 @@ class BadgeAdminController extends Controller
 
         $badge->update($validated);
 
-        return redirect()->route('admin.badges.index')->with('success', "อัปเดตข้อมูลเหรียญ '{$badge->name_th}' เรียบร้อยแล้ว");
+        return redirect()->route('admin.journey.index')->with('success', "อัปเดตข้อมูลเหรียญ '{$badge->name_th}' เรียบร้อยแล้ว");
     }
 
     public function destroy(Badge $badge): RedirectResponse
@@ -74,6 +68,6 @@ class BadgeAdminController extends Controller
         $badge->users()->detach();
         $badge->delete();
 
-        return redirect()->route('admin.badges.index')->with('success', 'ลบเหรียญรางวัลเรียบร้อยแล้ว');
+        return redirect()->route('admin.journey.index')->with('success', 'ลบเหรียญรางวัลเรียบร้อยแล้ว');
     }
 }

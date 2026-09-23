@@ -42,6 +42,25 @@ class DatabaseSeeder extends Seeder
             'role' => 'user',
         ]);
 
+        $extraUsers = [
+            ['name' => 'สมชาย ใจดี (Senior Dev)', 'email' => 'somchai@example.com', 'role' => 'user'],
+            ['name' => 'อนันต์ สุขเสริฐ (System Architect)', 'email' => 'anan@example.com', 'role' => 'user'],
+            ['name' => 'นภา วงศ์ไพศาล (Data Scientist)', 'email' => 'napha@example.com', 'role' => 'user'],
+            ['name' => 'กิตติพงษ์ วรโชติ (DevOps Specialist)', 'email' => 'kittipong@example.com', 'role' => 'user'],
+            ['name' => 'บรรณารักษ์ อาวุโส (Senior Librarian)', 'email' => 'librarian@example.com', 'role' => 'admin'],
+        ];
+
+        foreach ($extraUsers as $u) {
+            User::firstOrCreate(
+                ['email' => $u['email']],
+                [
+                    'name' => $u['name'],
+                    'password' => Hash::make('password'),
+                    'role' => $u['role'],
+                ]
+            );
+        }
+
         $categories = [
             'Fiction',
             'Non-Fiction',

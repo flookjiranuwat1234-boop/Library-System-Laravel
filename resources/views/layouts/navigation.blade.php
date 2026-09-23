@@ -6,7 +6,9 @@
                 <!-- Logo -->
                 <div class="flex shrink-0 items-center">
                     <a href="{{ Auth::user()->role === 'admin' ? route('admin.dashboard') : route('dashboard') }}" class="flex items-center gap-2.5 font-bold tracking-tight text-white">
-                        <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-500 text-lg shadow-sm">📚</span>
+                        <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-500 text-white shadow-sm">
+                            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
+                        </span>
                         <span class="hidden lg:block">{{ config('app.name', 'ระบบห้องสมุด') }}</span>
                     </a>
                 </div>
@@ -22,23 +24,18 @@
                         {{ __('Dashboard') }}
                     </x-nav-link>
                     @endif
-                    <x-nav-link :href="route('books.index')" :active="request()->routeIs('books.*')">
-                        {{ __('Books') }}
+                    <x-nav-link :href="route('books.index')" :active="request()->routeIs('books.*') || request()->routeIs('categories.*')">
+                        {{ __('หนังสือ & หมวดหมู่') }}
                     </x-nav-link>
-                    @if(Auth::user()->role === 'admin')
-                    <x-nav-link :href="route('categories.index')" :active="request()->routeIs('categories.*')">
-                        {{ __('Categories') }}
-                    </x-nav-link>
-                    @endif
                     <x-nav-link :href="route('borrows.index')" :active="request()->routeIs('borrows.*')">
                         {{ Auth::user()->role === 'admin' ? __('Borrow Records') : __('My Borrows') }}
                     </x-nav-link>
                     @if(Auth::user()->role === 'admin')
-                    <x-nav-link :href="route('admin.journey.index')" :active="request()->routeIs('admin.journey.*')">
-                        {{ __('สถิตินักอ่าน') }}
+                    <x-nav-link :href="route('admin.users.index')" :active="request()->routeIs('admin.users.*')">
+                        {{ __('จัดการสมาชิก') }}
                     </x-nav-link>
-                    <x-nav-link :href="route('admin.badges.index')" :active="request()->routeIs('admin.badges.*')">
-                        {{ __('จัดการเหรียญ') }}
+                    <x-nav-link :href="route('admin.journey.index')" :active="request()->routeIs('admin.journey.*') || request()->routeIs('admin.badges.*')">
+                        {{ __('สถิติ & เหรียญรางวัล') }}
                     </x-nav-link>
                     @else
                     <x-nav-link :href="route('journey.index')" :active="request()->routeIs('journey.*')">
@@ -48,8 +45,13 @@
                 </div>
             </div>
 
-            <!-- Settings Dropdown -->
-            <div class="hidden sm:flex sm:items-center sm:ms-6">
+            <!-- QR Scanner & Settings Dropdown -->
+            <div class="hidden sm:flex sm:items-center sm:gap-3 sm:ms-6">
+                <button @click="$dispatch('open-qr-scanner')" type="button" class="inline-flex items-center gap-1.5 rounded-xl border border-emerald-500/40 bg-emerald-500/15 px-3 py-1.5 text-xs font-bold text-emerald-300 transition hover:bg-emerald-500/30 hover:text-white" title="เปิดกล้องสแกน QR Code หนังสือ">
+                    <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z"/></svg>
+                    <span>สแกน QR</span>
+                </button>
+
                 <x-dropdown align="right" width="48">
                     <x-slot name="trigger">
                         <button class="relative inline-flex items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-sm font-medium text-slate-200 transition hover:bg-white/10 hover:text-white focus:outline-none focus:ring-2 focus:ring-emerald-400">
@@ -117,14 +119,9 @@
                 {{ __('Dashboard') }}
             </x-responsive-nav-link>
             @endif
-            <x-responsive-nav-link :href="route('books.index')" :active="request()->routeIs('books.*')">
-                {{ __('Books') }}
+            <x-responsive-nav-link :href="route('books.index')" :active="request()->routeIs('books.*') || request()->routeIs('categories.*')">
+                {{ __('หนังสือ & หมวดหมู่') }}
             </x-responsive-nav-link>
-            @if(Auth::user()->role === 'admin')
-            <x-responsive-nav-link :href="route('categories.index')" :active="request()->routeIs('categories.*')">
-                {{ __('Categories') }}
-            </x-responsive-nav-link>
-            @endif
             <x-responsive-nav-link :href="route('borrows.index')" :active="request()->routeIs('borrows.*')">
                 {{ Auth::user()->role === 'admin' ? __('Borrow Records') : __('My Borrows') }}
             </x-responsive-nav-link>
@@ -137,6 +134,11 @@
 
         <!-- Responsive Settings Options -->
         <div class="border-t border-white/10 pb-3 pt-4">
+            <div class="px-4 mb-3">
+                <button @click="$dispatch('open-qr-scanner'); open = false" type="button" class="w-full flex items-center justify-center gap-2 rounded-xl bg-emerald-600 px-4 py-2.5 text-xs font-bold text-white shadow-sm transition hover:bg-emerald-700">
+                    📷 <span>เปิดกล้องสแกน QR Code</span>
+                </button>
+            </div>
             <div class="px-4">
                 <div class="text-base font-semibold text-white">{{ Auth::user()->name }}</div>
                 <div class="text-sm text-slate-400">{{ Auth::user()->email }}</div>

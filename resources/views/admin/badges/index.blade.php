@@ -12,7 +12,7 @@
                 <a href="{{ route('admin.journey.index') }}" class="rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-50 shadow-sm transition">
                     ← สถิตินักอ่าน
                 </a>
-                <a href="{{ route('admin.badges.create') }}" class="rounded-xl bg-amber-500 px-4 py-2.5 text-sm font-bold text-slate-950 shadow-sm hover:bg-amber-400 transition">
+                <a href="{{ route('admin.badges.create') }}" class="rounded-xl bg-emerald-600 px-4 py-2.5 text-sm font-bold text-white shadow-sm hover:bg-emerald-700 transition">
                     + เพิ่มเหรียญใหม่
                 </a>
             </div>
@@ -33,7 +33,7 @@
                     <div class="rounded-2xl border border-slate-200 bg-white p-6 flex flex-col justify-between shadow-sm hover:border-slate-300 transition">
                         <div>
                             <div class="flex items-center justify-between gap-3 mb-4">
-                                <div class="flex h-14 w-14 items-center justify-center rounded-2xl bg-slate-50 text-3xl border border-slate-200 shadow-sm">
+                                <div class="flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-50 text-emerald-700 text-2xl border border-emerald-100 shadow-sm">
                                     {{ $badge->icon }}
                                 </div>
                                 <span class="rounded-full px-3 py-1 text-xs font-bold uppercase tracking-wider {{ $badge->tier === 'gold' ? 'bg-amber-100 text-amber-800 border border-amber-200' : ($badge->tier === 'silver' ? 'bg-slate-100 text-slate-700 border border-slate-200' : ($badge->tier === 'bronze' ? 'bg-amber-800/10 text-amber-900 border border-amber-800/20' : 'bg-purple-100 text-purple-800 border border-purple-200')) }}">
