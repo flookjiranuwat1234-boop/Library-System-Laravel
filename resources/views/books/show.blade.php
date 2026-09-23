@@ -18,7 +18,15 @@
                     {{-- Cover --}}
                     <div class="md:w-1/3">
                         @if($book->coverImageUrl())
-                            <img src="{{ $book->coverImageUrl() }}" alt="{{ $book->title }}" class="w-full rounded-2xl shadow-lg">
+                            <div class="relative overflow-hidden rounded-2xl shadow-lg bg-gradient-to-br from-amber-800 via-amber-900 to-slate-900 aspect-[3/4]">
+                                <img src="{{ $book->coverImageUrl() }}" alt="{{ $book->title }}" class="h-full w-full object-cover rounded-2xl" onerror="this.style.display='none'; this.nextElementSibling.classList.remove('hidden');">
+                                <div class="hidden flex h-full flex-col items-center justify-center p-6 text-center text-amber-100 relative">
+                                    <div class="absolute inset-3 border border-amber-400/30 rounded-xl pointer-events-none"></div>
+                                    <span class="text-5xl mb-3 filter drop-shadow">📚</span>
+                                    <h4 class="text-base font-bold leading-snug line-clamp-3 text-amber-50 drop-shadow">{{ $book->title }}</h4>
+                                    <p class="text-xs mt-1 text-amber-200/80 truncate w-full">{{ $book->author }}</p>
+                                </div>
+                            </div>
                         @else
                             <div class="flex h-64 w-full items-center justify-center rounded-2xl bg-gradient-to-br from-slate-100 to-slate-200 text-slate-400 shadow-lg">
                                 <span class="text-6xl">📘</span>

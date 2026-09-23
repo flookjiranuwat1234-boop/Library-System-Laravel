@@ -46,12 +46,12 @@ class Book extends Model
 
     public function coverImageUrl(): ?string
     {
-        if ($this->cover_image === null) {
-            return null;
+        if ($this->cover_image) {
+            return str_contains($this->cover_image, '://')
+                ? $this->cover_image
+                : Storage::disk('public')->url($this->cover_image);
         }
 
-        return str_contains($this->cover_image, '://')
-            ? $this->cover_image
-            : Storage::disk('public')->url($this->cover_image);
+        return "https://picsum.photos/seed/book_{$this->id}/600/800";
     }
 }

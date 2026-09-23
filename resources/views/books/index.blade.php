@@ -2,8 +2,9 @@
     <x-slot name="header">
         <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <div>
-                <p class="text-xs font-bold uppercase tracking-wider text-emerald-600">คลังความรู้</p>
-                <h2 class="page-title text-2xl font-black text-slate-900">หนังสือ & หมวดหมู่</h2>
+                <p class="text-xs font-semibold uppercase tracking-wider text-emerald-600">Catalog Management</p>
+                <h2 class="page-title text-slate-900">หนังสือ & หมวดหมู่</h2>
+                <p class="text-xs text-slate-500 mt-0.5">คลังความรู้ ค้นหา จัดการรายการหนังสือ และจัดหมวดหมู่หนังสือในระบบ</p>
             </div>
             <div class="flex items-center gap-2">
                 @if(Auth::user()->role === 'admin')
@@ -185,11 +186,19 @@
                     <article class="group flex flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition duration-300 hover:-translate-y-1 hover:border-emerald-200 hover:shadow-xl hover:shadow-emerald-900/5">
                         <a href="{{ route('books.show', $book) }}" class="relative block aspect-[4/5] overflow-hidden bg-gradient-to-br from-slate-100 to-slate-200">
                             @if($book->coverImageUrl())
-                                <img src="{{ $book->coverImageUrl() }}" alt="{{ $book->title }}" class="h-full w-full object-cover transition duration-500 group-hover:scale-105">
+                                <img src="{{ $book->coverImageUrl() }}" alt="{{ $book->title }}" loading="lazy" class="h-full w-full object-cover transition duration-500 group-hover:scale-105" onerror="this.onerror=null; this.style.display='none'; this.nextElementSibling.classList.remove('hidden');">
+                                <div class="hidden flex h-full flex-col items-center justify-center p-4 text-center bg-gradient-to-br from-amber-800 via-amber-900 to-slate-900 text-amber-100 relative">
+                                    <div class="absolute inset-2 border border-amber-400/30 rounded-xl pointer-events-none"></div>
+                                    <span class="text-3xl mb-2 filter drop-shadow">📚</span>
+                                    <h4 class="text-xs font-bold leading-snug line-clamp-3 text-amber-50 drop-shadow">{{ $book->title }}</h4>
+                                    <p class="text-[10px] mt-1 text-amber-200/80 truncate w-full">{{ $book->author }}</p>
+                                </div>
                             @else
-                                <div class="flex h-full flex-col items-center justify-center gap-2 text-slate-400">
-                                    <svg class="h-12 w-12 stroke-[1.5]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
-                                    <span class="text-xs">ไม่มีรูปปก</span>
+                                <div class="flex h-full flex-col items-center justify-center p-4 text-center bg-gradient-to-br from-amber-800 via-amber-900 to-slate-900 text-amber-100 relative">
+                                    <div class="absolute inset-2 border border-amber-400/30 rounded-xl pointer-events-none"></div>
+                                    <span class="text-3xl mb-2 filter drop-shadow">📚</span>
+                                    <h4 class="text-xs font-bold leading-snug line-clamp-3 text-amber-50 drop-shadow">{{ $book->title }}</h4>
+                                    <p class="text-[10px] mt-1 text-amber-200/80 truncate w-full">{{ $book->author }}</p>
                                 </div>
                             @endif
                             <span class="status-badge absolute right-3 top-3 inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold shadow-md backdrop-blur-md border transition-all {{ $book->stock > 0 ? 'bg-white/95 text-emerald-800 border-emerald-200/80' : 'bg-rose-600/95 text-white border-rose-500/80' }}">

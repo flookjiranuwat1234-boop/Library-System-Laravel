@@ -1,6 +1,15 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="page-title">เพิ่มหนังสือ</h2>
+        <div class="flex items-center justify-between gap-4">
+            <div>
+                <p class="text-xs font-semibold uppercase tracking-wider text-emerald-600">Catalog Management</p>
+                <h2 class="page-title text-slate-900">เพิ่มหนังสือเล่มใหม่</h2>
+                <p class="text-xs text-slate-500 mt-0.5">กรอกรายละเอียดหนังสือ อัปโหลดรูปปก และกำหนดจำนวนในคลังความรู้</p>
+            </div>
+            <a href="{{ route('books.index') }}" class="rounded-xl border border-slate-200 bg-white px-4 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 shadow-sm transition">
+                ← ยกเลิก
+            </a>
+        </div>
     </x-slot>
 
     <div class="page-shell">

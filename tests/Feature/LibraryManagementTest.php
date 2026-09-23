@@ -111,7 +111,7 @@ class LibraryManagementTest extends TestCase
         $this->actingAs($user)
             ->from('/books/'.$book->id)
             ->post('/borrows', ['book_id' => $book->id])
-            ->assertSessionHas('error', 'คุณมีคำขอหรือกำลังยืมหนังสือเล่มนี้อยู่แล้ว')
+            ->assertSessionHas('error', 'สมาชิกมีคำขอหรือกำลังยืมหนังสือเล่มนี้อยู่แล้ว')
             ->assertRedirect('/books/'.$book->id);
     }
 
@@ -122,6 +122,7 @@ class LibraryManagementTest extends TestCase
         $book = Book::factory()->create(['stock' => 2]);
 
         $this->actingAs($user)
+            ->from(route('borrows.index'))
             ->post(route('borrows.store'), ['book_id' => $book->id])
             ->assertRedirect(route('borrows.index'))
             ->assertSessionHas('success', 'ส่งคำขอยืมแล้ว กรุณารอผู้ดูแลอนุมัติ');
@@ -244,9 +245,9 @@ class LibraryManagementTest extends TestCase
 
         $this->assertDatabaseHas('users', ['email' => 'admin@example.com']);
         $this->assertDatabaseHas('users', ['email' => 'user@example.com']);
-        $this->assertDatabaseCount('users', 2);
+        $this->assertDatabaseCount('users', 7);
         $this->assertDatabaseCount('categories', 12);
-        $this->assertDatabaseCount('books', 54);
+        $this->assertDatabaseCount('books', 50);
         $this->assertDatabaseHas('books', [
             'title' => 'ความสุขของกะทิ',
             'author' => 'งามพรรณ เวชชาชีวะ',

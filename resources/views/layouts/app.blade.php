@@ -15,6 +15,8 @@
         <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
         <style>
             [x-cloak] { display: none !important; }
+            ::-webkit-scrollbar { display: none !important; width: 0 !important; height: 0 !important; background: transparent !important; }
+            * { -ms-overflow-style: none !important; scrollbar-width: none !important; }
             .status-badge {
                 display: inline-flex;
                 align-items: center;
@@ -54,30 +56,73 @@
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
     <body class="font-sans antialiased">
-        <div class="relative flex min-h-screen flex-col overflow-x-hidden bg-slate-50">
+        <div class="relative flex min-h-screen flex-col overflow-x-hidden bg-slate-50" x-data="{ sidebarOpen: false }">
             <div class="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_10%_10%,rgba(16,185,129,0.08),transparent_25%),radial-gradient(circle_at_90%_40%,rgba(14,165,233,0.07),transparent_25%)]"></div>
             @include('layouts.navigation')
 
-            <!-- Page Heading -->
-            @isset($header)
-                <header class="border-b border-slate-200/70 bg-white shadow-sm">
-                    <div class="mx-auto max-w-7xl px-4 py-3.5 sm:px-6 lg:px-8">
-                        {{ $header }}
+            <!-- Main Content Area (Sidebar Offset for Admin) -->
+            <div class="flex flex-1 flex-col min-w-0 {{ Auth::user()->role === 'admin' ? 'lg:pl-64' : '' }}">
+                @if(Auth::user()->role === 'admin')
+                <!-- Top Minimal Header (Mobile Only for Admin) -->
+                <header class="sticky top-0 z-30 flex h-14 shrink-0 items-center justify-between border-b border-slate-200/80 bg-white/90 px-4 shadow-sm backdrop-blur lg:hidden">
+                    <div class="flex items-center gap-3">
+                        <!-- Mobile Hamburger Button -->
+                        <button type="button" @click="sidebarOpen = true" class="rounded-xl p-2 text-slate-600 hover:bg-slate-100 lg:hidden">
+                            <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+                        </button>
+                        <span class="font-bold text-slate-800 text-sm lg:hidden">{{ config('app.name', 'ระบบห้องสมุด') }}</span>
+                    </div>
+
+                    <!-- Right Header Actions -->
+                    <div class="flex items-center gap-3">
+                        <button @click="$dispatch('open-qr-scanner')" type="button" class="inline-flex items-center gap-1.5 rounded-xl border border-emerald-500/30 bg-emerald-50 px-3 py-1.5 text-xs font-bold text-emerald-700 transition hover:bg-emerald-100" title="เปิดกล้องสแกน QR Code หนังสือ">
+                            <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z"/></svg>
+                            <span class="hidden sm:inline">สแกน QR</span>
+                        </button>
+
+                        <x-dropdown align="right" width="48">
+                            <x-slot name="trigger">
+                                <button class="relative inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-slate-50 px-3 py-1.5 text-xs font-semibold text-slate-700 transition hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                                    <span class="flex h-6 w-6 items-center justify-center rounded-full bg-emerald-100 text-[11px] font-extrabold text-emerald-700">{{ mb_substr(Auth::user()->name, 0, 1) }}</span>
+                                    <span>{{ Auth::user()->name }}</span>
+                                    <svg class="h-3.5 w-3.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                                </button>
+                            </x-slot>
+                            <x-slot name="content">
+                                <x-dropdown-link :href="route('profile.edit')">โปรไฟล์</x-dropdown-link>
+                                <x-dropdown-link :href="route('admin.notifications.index')">การแจ้งเตือน</x-dropdown-link>
+                                <x-dropdown-link :href="route('admin.settings.edit')">ตั้งค่าระบบ</x-dropdown-link>
+                                <form method="POST" action="{{ route('logout') }}">
+                                    @csrf
+                                    <x-dropdown-link :href="route('logout')" onclick="event.preventDefault(); this.closest('form').submit();">ออกจากระบบ</x-dropdown-link>
+                                </form>
+                            </x-slot>
+                        </x-dropdown>
                     </div>
                 </header>
-            @endisset
+                @endif
 
-            <!-- Page Content -->
-            <main class="relative flex-1">
-                {{ $slot }}
-            </main>
+                <!-- Page Heading -->
+                @isset($header)
+                    <header class="border-b border-slate-200/70 bg-white/60 shadow-sm backdrop-blur">
+                        <div class="mx-auto max-w-7xl px-4 py-3.5 sm:px-6 lg:px-8">
+                            {{ $header }}
+                        </div>
+                    </header>
+                @endisset
 
-            <footer class="relative border-t border-slate-200/80 bg-white/80 py-6 backdrop-blur">
-                <div class="mx-auto flex max-w-7xl flex-col gap-2 px-4 text-sm text-slate-500 sm:flex-row sm:items-center sm:justify-between sm:px-6 lg:px-8">
-                    <p>© {{ now()->year }} {{ config('app.name', 'ระบบห้องสมุด') }}</p>
-                    <p class="flex items-center gap-2"><span class="h-2 w-2 rounded-full bg-emerald-500"></span>ระบบพร้อมให้บริการ</p>
-                </div>
-            </footer>
+                <!-- Page Content -->
+                <main class="relative flex-1">
+                    {{ $slot }}
+                </main>
+
+                <footer class="relative border-t border-slate-200/80 bg-white/80 py-4 backdrop-blur">
+                    <div class="mx-auto flex max-w-7xl flex-col gap-2 px-4 text-xs text-slate-500 sm:flex-row sm:items-center sm:justify-between sm:px-6 lg:px-8">
+                        <p>© {{ now()->year }} {{ config('app.name', 'ระบบห้องสมุด') }}</p>
+                        <p class="flex items-center gap-2"><span class="h-2 w-2 rounded-full bg-emerald-500"></span>ระบบพร้อมให้บริการ</p>
+                    </div>
+                </footer>
+            </div>
         </div>
 
         {{-- Live Camera & Image File QR Scanner Modal --}}

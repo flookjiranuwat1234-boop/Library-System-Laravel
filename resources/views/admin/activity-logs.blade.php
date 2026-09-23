@@ -1,8 +1,12 @@
 <x-app-layout>
     <x-slot name="header">
         <div class="flex flex-col gap-1 sm:flex-row sm:items-end sm:justify-between">
-            <div><p class="text-sm font-semibold text-violet-600">ระบบความปลอดภัย</p><h2 class="page-title">บันทึกกิจกรรม (Audit Log)</h2></div>
-            <p class="text-sm text-slate-500">{{ $logs->total() }} รายการ</p>
+            <div>
+                <p class="text-xs font-semibold uppercase tracking-wider text-emerald-600">Audit Logs</p>
+                <h2 class="page-title text-slate-900">บันทึกกิจกรรมการใช้งาน</h2>
+                <p class="text-xs text-slate-500 mt-0.5">ประวัติการทำรายการ แก้ไข ลบ หรือเปลี่ยนแปลงข้อมูลในระบบโดยผู้ใช้</p>
+            </div>
+            <p class="text-sm font-semibold text-slate-500">พบทั้งหมด {{ $logs->total() }} รายการ</p>
         </div>
     </x-slot>
 

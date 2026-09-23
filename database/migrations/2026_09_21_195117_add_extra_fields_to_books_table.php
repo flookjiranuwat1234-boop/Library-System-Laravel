@@ -25,7 +25,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('books', function (Blueprint $table) {
-            $table->dropColumn(['isbn', 'publisher', 'year', 'pages']);
+            $table->dropColumn(['pages', 'year', 'publisher', 'isbn']);
         });
     }
 };

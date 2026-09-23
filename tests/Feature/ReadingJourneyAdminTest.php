@@ -21,7 +21,7 @@ class ReadingJourneyAdminTest extends TestCase
         $response = $this->actingAs($admin)->get(route('admin.journey.index'));
 
         $response->assertOk();
-        $response->assertSee('ระบบติดตามเส้นทางการอ่าน & ลีดเดอร์บอร์ด');
+        $response->assertSee('สถิตินักอ่าน &amp; จัดการเหรียญรางวัล', false);
         $response->assertSee($user->name);
     }
 
@@ -89,7 +89,7 @@ class ReadingJourneyAdminTest extends TestCase
             'sort_order' => 99,
         ]);
 
-        $response->assertRedirect(route('admin.badges.index'));
+        $response->assertRedirect(route('admin.journey.index'));
         $this->assertDatabaseHas('badges', ['code' => 'custom_badge']);
 
         $badge = Badge::where('code', 'custom_badge')->first();
@@ -106,12 +106,12 @@ class ReadingJourneyAdminTest extends TestCase
             'sort_order' => 100,
         ]);
 
-        $response->assertRedirect(route('admin.badges.index'));
+        $response->assertRedirect(route('admin.journey.index'));
         $this->assertDatabaseHas('badges', ['name_th' => 'เหรียญนักประดิษฐ์ขั้นสูง']);
 
         // Delete Badge
         $response = $this->actingAs($admin)->delete(route('admin.badges.destroy', $badge));
-        $response->assertRedirect(route('admin.badges.index'));
+        $response->assertRedirect(route('admin.journey.index'));
         $this->assertDatabaseMissing('badges', ['code' => 'custom_badge']);
     }
 }

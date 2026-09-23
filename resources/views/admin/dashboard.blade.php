@@ -3,7 +3,8 @@
         <div class="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
             <div>
                 <p class="text-xs font-semibold uppercase tracking-wider text-emerald-600">Executive Overview</p>
-                <h2 class="page-title text-slate-900">แผงควบคุมผู้ดูแลระบบ</h2>
+                <h2 class="page-title text-slate-900">แดชบอร์ดผู้ดูแลระบบ</h2>
+                <p class="text-xs text-slate-500 mt-0.5">สรุปภาพรวมระบบห้องสมุด สถิติการยืม-คืน และกิจกรรมล่าสุด</p>
             </div>
             <div class="flex items-center gap-3">
                 <span class="inline-flex items-center gap-1.5 rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1 text-xs font-medium text-emerald-700">

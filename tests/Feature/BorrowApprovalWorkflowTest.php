@@ -21,7 +21,7 @@ class BorrowApprovalWorkflowTest extends TestCase
         $book = Book::factory()->create(['stock' => 2]);
         Notification::fake();
 
-        $this->actingAs($member)->post(route('borrows.store'), ['book_id' => $book->id])
+        $this->actingAs($member)->from(route('borrows.index'))->post(route('borrows.store'), ['book_id' => $book->id])
             ->assertRedirect(route('borrows.index'))
             ->assertSessionHas('success', 'ส่งคำขอยืมแล้ว กรุณารอผู้ดูแลอนุมัติ');
 

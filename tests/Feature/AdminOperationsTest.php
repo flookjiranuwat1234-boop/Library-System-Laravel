@@ -62,6 +62,7 @@ class AdminOperationsTest extends TestCase
         $book = Book::factory()->create(['title' => 'หนังสือรออนุมัติ', 'stock' => 2]);
 
         $this->actingAs($member)
+            ->from(route('borrows.index'))
             ->post(route('borrows.store'), ['book_id' => $book->id])
             ->assertRedirect(route('borrows.index'));
 

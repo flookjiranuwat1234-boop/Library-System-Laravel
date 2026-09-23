@@ -1,11 +1,12 @@
 <x-app-layout>
     <x-slot name="header">
-        <div class="flex items-center justify-between">
+        <div class="flex items-center justify-between gap-4">
             <div>
-                <p class="text-sm font-semibold text-emerald-600">User Management</p>
+                <p class="text-xs font-semibold uppercase tracking-wider text-emerald-600">User Management</p>
                 <h2 class="page-title text-slate-900">เพิ่มสมาชิกใหม่</h2>
+                <p class="text-xs text-slate-500 mt-0.5">กรอกข้อมูลส่วนตัวและกำหนดสิทธิ์การใช้งานของสมาชิกใหม่ในระบบ</p>
             </div>
-            <a href="{{ route('admin.users.index') }}" class="rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50">
+            <a href="{{ route('admin.users.index') }}" class="rounded-xl border border-slate-200 bg-white px-4 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 shadow-sm transition">
                 ← ยกเลิก
             </a>
         </div>

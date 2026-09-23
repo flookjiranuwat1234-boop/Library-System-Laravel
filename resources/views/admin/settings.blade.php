@@ -1,5 +1,11 @@
 <x-app-layout>
-    <x-slot name="header"><h2 class="page-title">ตั้งค่าระบบ</h2></x-slot>
+    <x-slot name="header">
+        <div>
+            <p class="text-xs font-semibold uppercase tracking-wider text-emerald-600">System Settings</p>
+            <h2 class="page-title text-slate-900">ตั้งค่าระบบห้องสมุด</h2>
+            <p class="text-xs text-slate-500 mt-0.5">กำหนดเกณฑ์แจ้งเตือนหนังสือใกล้หมดและการส่งอีเมลทดสอบระบบ</p>
+        </div>
+    </x-slot>
     <div class="page-shell"><div class="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8 space-y-6">
         @if(session('success'))<div class="alert-success">{{ session('success') }}</div>@endif
         <section class="panel p-6">

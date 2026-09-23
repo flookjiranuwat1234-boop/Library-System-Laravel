@@ -8,6 +8,7 @@
                 <h2 class="page-title text-slate-900">
                     {{ Auth::user()->role === 'admin' ? 'รายการคำขอและประวัติยืม–คืน' : 'รายการยืมหนังสือของฉัน' }}
                 </h2>
+                <p class="text-xs text-slate-500 mt-0.5">{{ Auth::user()->role === 'admin' ? 'อนุมัติคำขอยืม บันทึกการรับคืนหนังสือ และติดตามรายการเกินกำหนดส่ง' : 'ประวัติและสถานะรายการยืมหนังสือทั้งหมดของคุณ' }}</p>
             </div>
             <p class="text-sm font-semibold text-slate-500">พบทั้งหมด {{ number_format($borrows->total()) }} รายการ</p>
         </div>

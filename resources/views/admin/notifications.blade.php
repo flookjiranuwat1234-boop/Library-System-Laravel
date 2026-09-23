@@ -1,5 +1,17 @@
 <x-app-layout>
-    <x-slot name="header"><div class="flex items-center justify-between gap-4"><h2 class="page-title">ประวัติการแจ้งเตือน</h2><form method="POST" action="{{ route('admin.notifications.read-all') }}">@csrf<button class="button-secondary">อ่านทั้งหมด</button></form></div></x-slot>
+    <x-slot name="header">
+        <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+                <p class="text-xs font-semibold uppercase tracking-wider text-emerald-600">System Notifications</p>
+                <h2 class="page-title text-slate-900">การแจ้งเตือนระบบ</h2>
+                <p class="text-xs text-slate-500 mt-0.5">รายการแจ้งเตือนการยืม คืน และการอนุมัติคำขอหนังสือในระบบ</p>
+            </div>
+            <form method="POST" action="{{ route('admin.notifications.read-all') }}">
+                @csrf
+                <button class="button-secondary text-xs">อ่านทั้งหมด</button>
+            </form>
+        </div>
+    </x-slot>
     <div class="page-shell"><div class="page-container space-y-4">
         @if(session('success'))<div class="alert-success">{{ session('success') }}</div>@endif
         @forelse($notifications as $notification)

@@ -52,6 +52,7 @@ class LowBookStockNotificationTest extends TestCase
         $book = Book::factory()->create(['stock' => 3]);
 
         $this->actingAs($member)
+            ->from(route('borrows.index'))
             ->post(route('borrows.store'), ['book_id' => $book->id])
             ->assertRedirect(route('borrows.index'));
 
