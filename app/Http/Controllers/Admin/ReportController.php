@@ -24,22 +24,74 @@ class ReportController extends Controller
 
     public function csv(): StreamedResponse
     {
-        return response()->streamDownload(function (): void {
-            $stream = fopen('php://output', 'wb');
-            fwrite($stream, "\xEF\xBB\xBF");
-            fputcsv($stream, ['หนังสือ', 'สมาชิก', 'วันที่ยืม', 'กำหนดคืน', 'สถานะ']);
+        $totalBooks = Book::count();
+        $totalMembers = User::where('role', 'user')->count();
+        $activeLoans = BorrowRecord::whereIn('status', ['borrowed', 'overdue'])->count();
+        $overdueLoans = BorrowRecord::whereIn('status', ['borrowed', 'overdue'])->whereDate('due_date', '<', today())->count();
 
-            BorrowRecord::with(['book', 'user'])->latest('borrowed_at')->lazy()->each(
-                fn (BorrowRecord $record) => fputcsv($stream, [
-                    $record->book->title,
-                    $record->user->name,
-                    $record->borrowed_at?->format('Y-m-d') ?? '-',
-                    $record->due_date?->format('Y-m-d') ?? '-',
-                    $record->status,
-                ]),
+        $statusTranslations = [
+            'borrowed' => 'กำลังยืม',
+            'returned' => 'คืนเรียบร้อย',
+            'overdue' => 'เกินกำหนดส่ง',
+            'pending' => 'รออนุมัติ',
+            'rejected' => 'ไม่อนุมัติ',
+        ];
+
+        return response()->streamDownload(function () use ($totalBooks, $totalMembers, $activeLoans, $overdueLoans, $statusTranslations): void {
+            $stream = fopen('php://output', 'wb');
+            // UTF-8 BOM for Thai language support in Microsoft Excel
+            fwrite($stream, "\xEF\xBB\xBF");
+
+            // Meta summary header rows
+            fputcsv($stream, ['รายงานสรุปการยืม-คืนหนังสือ ระบบจัดคลังห้องสมุด (Library Circulation Detailed Report)']);
+            fputcsv($stream, ['วันที่ออกรายงาน:', now()->locale('th')->translatedFormat('d F Y H:i:s')]);
+            fputcsv($stream, ['ผู้ออกรายงาน:', auth()->user()?->name ?? 'ผู้ดูแลระบบ']);
+            fputcsv($stream, ['สรุปภาพรวม:', "หนังสือทั้งหมด {$totalBooks} เล่ม | สมาชิก {$totalMembers} คน | กำลังยืม {$activeLoans} รายการ | เกินกำหนด {$overdueLoans} รายการ"]);
+            fputcsv($stream, []);
+
+            // Column Headers
+            fputcsv($stream, [
+                'ลำดับ',
+                'รหัสรายการ',
+                'ชื่อหนังสือ',
+                'หมวดหมู่',
+                'ชื่อผู้ยืม',
+                'อีเมลสมาชิก',
+                'วันที่ยืม',
+                'กำหนดวันส่งคืน',
+                'วันที่คืนจริง',
+                'สถานะรายการ',
+                'จำนวนครั้งการต่ออายุ',
+            ]);
+
+            $index = 1;
+            BorrowRecord::with(['book.category', 'user'])->latest('borrowed_at')->lazy()->each(
+                function (BorrowRecord $record) use ($stream, &$index, $statusTranslations): void {
+                    $statusText = $statusTranslations[$record->status] ?? $record->status;
+                    if ($record->status === 'borrowed' && $record->due_date && $record->due_date->isPast()) {
+                        $statusText = 'เกินกำหนดส่ง';
+                    }
+
+                    fputcsv($stream, [
+                        $index++,
+                        'BR-'.str_pad((string) $record->id, 5, '0', STR_PAD_LEFT),
+                        $record->book?->title ?? 'ไม่พบหนังสือ',
+                        $record->book?->category?->name ?? 'ทั่วไป',
+                        $record->user?->name ?? 'ไม่พบผู้ใช้',
+                        $record->user?->email ?? '-',
+                        $record->borrowed_at?->format('d/m/Y') ?? '-',
+                        $record->due_date?->format('d/m/Y') ?? '-',
+                        $record->returned_at?->format('d/m/Y') ?? '-',
+                        $statusText,
+                        $record->renew_count ?? 0,
+                    ]);
+                }
             );
+
             fclose($stream);
-        }, 'library-report-'.today()->format('Y-m-d').'.csv', ['Content-Type' => 'text/csv; charset=UTF-8']);
+        }, 'library-borrowing-report-'.today()->format('Y-m-d').'.csv', [
+            'Content-Type' => 'text/csv; charset=UTF-8',
+        ]);
     }
 
     /** @return array<string, mixed> */
@@ -51,8 +103,8 @@ class ReportController extends Controller
             'totalCategories' => Category::count(),
             'activeLoans' => BorrowRecord::whereIn('status', ['borrowed', 'overdue'])->count(),
             'overdueLoans' => BorrowRecord::whereIn('status', ['borrowed', 'overdue'])->whereDate('due_date', '<', today())->count(),
-            'popularBooks' => Book::query()->withCount('borrowRecords')->orderByDesc('borrow_records_count')->take(10)->get(),
-            'recentRecords' => BorrowRecord::with(['book', 'user'])->latest('borrowed_at')->take(20)->get(),
+            'popularBooks' => Book::query()->with('category')->withCount('borrowRecords')->orderByDesc('borrow_records_count')->take(10)->get(),
+            'recentRecords' => BorrowRecord::with(['book.category', 'user'])->latest('borrowed_at')->take(50)->get(),
         ];
     }
 }
