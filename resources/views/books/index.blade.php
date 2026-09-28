@@ -207,7 +207,7 @@
                             </a>
 
                             {{-- Stock Status Badge --}}
-                            <span class="status-badge absolute right-2.5 top-2.5 sm:right-3 sm:top-3 inline-flex items-center rounded-full px-2 py-0.5 sm:px-3 sm:py-1 text-[10px] sm:text-xs font-semibold shadow-md backdrop-blur-md border transition-all pointer-events-none {{ $book->stock > 0 ? 'bg-white/95 text-emerald-800 border-emerald-200/80' : 'bg-rose-600/95 text-white border-rose-500/80' }}">
+                            <span class="status-badge absolute right-2 top-2 z-20 inline-flex items-center rounded-full px-2.5 py-0.5 text-[11px] font-bold shadow-md backdrop-blur-md border transition-all pointer-events-none {{ $book->stock > 0 ? 'bg-white/95 text-emerald-800 border-emerald-200/80' : 'bg-rose-600/95 text-white border-rose-500/80' }}">
                                 {{ $book->stock > 0 ? 'พร้อมยืม '.$book->stock : 'ถูกยืมหมด' }}
                             </span>
                         </div>
