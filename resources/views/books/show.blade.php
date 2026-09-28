@@ -18,9 +18,11 @@
                     {{-- Cover --}}
                     <div class="md:w-1/3">
                         @if($book->coverImageUrl())
-                            <div class="relative overflow-hidden rounded-2xl shadow-lg bg-gradient-to-br from-amber-800 via-amber-900 to-slate-900 aspect-[3/4]">
-                                <img src="{{ $book->coverImageUrl() }}" alt="{{ $book->title }}" class="h-full w-full object-cover rounded-2xl" onerror="this.style.display='none'; this.nextElementSibling.classList.remove('hidden');">
-                                <div class="hidden flex h-full flex-col items-center justify-center p-6 text-center text-amber-100 relative">
+                            <div class="relative overflow-hidden rounded-2xl shadow-lg bg-slate-900 aspect-[3/4]">
+                                {{-- Blurred ambient backdrop for non-standard image aspect ratios --}}
+                                <img src="{{ $book->coverImageUrl() }}" alt="" aria-hidden="true" class="absolute inset-0 h-full w-full object-cover blur-lg scale-110 opacity-40">
+                                <img src="{{ $book->coverImageUrl() }}" alt="{{ $book->title }}" class="relative z-10 h-full w-full object-contain p-2 rounded-2xl" onerror="this.style.display='none'; this.nextElementSibling.classList.remove('hidden');">
+                                <div class="hidden relative z-10 flex h-full flex-col items-center justify-center p-6 text-center text-amber-100">
                                     <div class="absolute inset-3 border border-amber-400/30 rounded-xl pointer-events-none"></div>
                                     <span class="text-5xl mb-3 filter drop-shadow">📚</span>
                                     <h4 class="text-base font-bold leading-snug line-clamp-3 text-amber-50 drop-shadow">{{ $book->title }}</h4>

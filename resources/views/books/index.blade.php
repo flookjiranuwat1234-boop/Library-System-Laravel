@@ -184,10 +184,12 @@
             <section id="catalog-results" class="grid grid-cols-2 gap-4 transition-opacity sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
                 @forelse($books as $book)
                     <article class="group flex flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition duration-300 hover:-translate-y-1 hover:border-emerald-200 hover:shadow-xl hover:shadow-emerald-900/5">
-                        <a href="{{ route('books.show', $book) }}" class="relative block aspect-[4/5] overflow-hidden bg-gradient-to-br from-slate-100 to-slate-200">
+                        <a href="{{ route('books.show', $book) }}" class="relative block aspect-[3/4] overflow-hidden bg-slate-900">
                             @if($book->coverImageUrl())
-                                <img src="{{ $book->coverImageUrl() }}" alt="{{ $book->title }}" loading="lazy" class="h-full w-full object-cover transition duration-500 group-hover:scale-105" onerror="this.onerror=null; this.style.display='none'; this.nextElementSibling.classList.remove('hidden');">
-                                <div class="hidden flex h-full flex-col items-center justify-center p-4 text-center bg-gradient-to-br from-amber-800 via-amber-900 to-slate-900 text-amber-100 relative">
+                                {{-- Blurred ambient backdrop for non-standard image aspect ratios --}}
+                                <img src="{{ $book->coverImageUrl() }}" alt="" aria-hidden="true" class="absolute inset-0 h-full w-full object-cover blur-md scale-110 opacity-40">
+                                <img src="{{ $book->coverImageUrl() }}" alt="{{ $book->title }}" loading="lazy" class="relative z-10 h-full w-full object-contain p-1 transition duration-500 group-hover:scale-105" onerror="this.onerror=null; this.style.display='none'; this.nextElementSibling.classList.remove('hidden');">
+                                <div class="hidden relative z-10 flex h-full flex-col items-center justify-center p-4 text-center bg-gradient-to-br from-amber-800 via-amber-900 to-slate-900 text-amber-100">
                                     <div class="absolute inset-2 border border-amber-400/30 rounded-xl pointer-events-none"></div>
                                     <span class="text-3xl mb-2 filter drop-shadow">📚</span>
                                     <h4 class="text-xs font-bold leading-snug line-clamp-3 text-amber-50 drop-shadow">{{ $book->title }}</h4>

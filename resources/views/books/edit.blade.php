@@ -76,7 +76,10 @@
                     <div class="mb-4">
                         <label for="cover_image" class="block text-sm font-semibold text-slate-700">เปลี่ยนรูปปกหนังสือ</label>
                         @if($book->coverImageUrl())
-                            <img src="{{ $book->coverImageUrl() }}" alt="รูปปกปัจจุบันของ {{ $book->title }}" class="mb-3 mt-2 h-32 w-24 rounded-xl object-cover shadow-sm">
+                            <div class="relative mb-3 mt-2 h-36 w-28 overflow-hidden rounded-xl bg-slate-900 shadow-sm">
+                                <img src="{{ $book->coverImageUrl() }}" alt="" aria-hidden="true" class="absolute inset-0 h-full w-full object-cover blur-sm opacity-50 scale-110">
+                                <img src="{{ $book->coverImageUrl() }}" alt="รูปปกปัจจุบันของ {{ $book->title }}" class="relative z-10 h-full w-full object-contain p-1">
+                            </div>
                         @endif
                         <input type="file" name="cover_image" id="cover_image" accept="image/jpeg,image/png,image/webp" class="form-control mt-1 file:me-4 file:rounded-lg file:border-0 file:bg-emerald-50 file:px-4 file:py-2 file:font-semibold file:text-emerald-700">
                         <p class="mt-1 text-xs text-slate-500">ไฟล์ใหม่จะแทนที่และลบรูปเดิมทันที รองรับไฟล์ขนาดไม่เกิน 2 MB</p>
