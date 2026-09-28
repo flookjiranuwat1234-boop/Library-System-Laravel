@@ -184,52 +184,57 @@
             <section id="catalog-results" class="grid grid-cols-2 gap-4 transition-opacity sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
                 @forelse($books as $book)
                     <article class="group flex flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition duration-300 hover:-translate-y-1 hover:border-emerald-200 hover:shadow-xl hover:shadow-emerald-900/5">
-                        <a href="{{ route('books.show', $book) }}" class="relative block aspect-[3/4] overflow-hidden bg-slate-900">
-                            @if($book->coverImageUrl())
-                                {{-- Blurred ambient backdrop for non-standard image aspect ratios --}}
-                                <img src="{{ $book->coverImageUrl() }}" alt="" aria-hidden="true" class="absolute inset-0 h-full w-full object-cover blur-md scale-110 opacity-40">
-                                <img src="{{ $book->coverImageUrl() }}" alt="{{ $book->title }}" loading="lazy" class="relative z-10 h-full w-full object-contain p-1 transition duration-500 group-hover:scale-105" onerror="this.onerror=null; this.style.display='none'; this.nextElementSibling.classList.remove('hidden');">
-                                <div class="hidden relative z-10 flex h-full flex-col items-center justify-center p-4 text-center bg-gradient-to-br from-amber-800 via-amber-900 to-slate-900 text-amber-100">
-                                    <div class="absolute inset-2 border border-amber-400/30 rounded-xl pointer-events-none"></div>
-                                    <span class="text-3xl mb-2 filter drop-shadow">📚</span>
-                                    <h4 class="text-xs font-bold leading-snug line-clamp-3 text-amber-50 drop-shadow">{{ $book->title }}</h4>
-                                    <p class="text-[10px] mt-1 text-amber-200/80 truncate w-full">{{ $book->author }}</p>
-                                </div>
-                            @else
-                                <div class="flex h-full flex-col items-center justify-center p-4 text-center bg-gradient-to-br from-amber-800 via-amber-900 to-slate-900 text-amber-100 relative">
-                                    <div class="absolute inset-2 border border-amber-400/30 rounded-xl pointer-events-none"></div>
-                                    <span class="text-3xl mb-2 filter drop-shadow">📚</span>
-                                    <h4 class="text-xs font-bold leading-snug line-clamp-3 text-amber-50 drop-shadow">{{ $book->title }}</h4>
-                                    <p class="text-[10px] mt-1 text-amber-200/80 truncate w-full">{{ $book->author }}</p>
-                                </div>
-                            @endif
-                            <span class="status-badge absolute right-2.5 top-2.5 sm:right-3 sm:top-3 inline-flex items-center rounded-full px-2 py-0.5 sm:px-3 sm:py-1 text-[10px] sm:text-xs font-semibold shadow-md backdrop-blur-md border transition-all {{ $book->stock > 0 ? 'bg-white/95 text-emerald-800 border-emerald-200/80' : 'bg-rose-600/95 text-white border-rose-500/80' }}">
+                        <div class="relative block aspect-[3/4] overflow-hidden bg-slate-900">
+                            <a href="{{ route('books.show', $book) }}" class="block h-full w-full">
+                                @if($book->coverImageUrl())
+                                    {{-- Blurred ambient backdrop for non-standard image aspect ratios --}}
+                                    <img src="{{ $book->coverImageUrl() }}" alt="" aria-hidden="true" class="absolute inset-0 h-full w-full object-cover blur-md scale-110 opacity-40">
+                                    <img src="{{ $book->coverImageUrl() }}" alt="{{ $book->title }}" loading="lazy" class="relative z-10 h-full w-full object-contain p-1 transition duration-500 group-hover:scale-105" onerror="this.onerror=null; this.style.display='none'; this.nextElementSibling.classList.remove('hidden');">
+                                    <div class="hidden relative z-10 flex h-full flex-col items-center justify-center p-4 text-center bg-gradient-to-br from-amber-800 via-amber-900 to-slate-900 text-amber-100">
+                                        <div class="absolute inset-2 border border-amber-400/30 rounded-xl pointer-events-none"></div>
+                                        <span class="text-3xl mb-2 filter drop-shadow">📚</span>
+                                        <h4 class="text-xs font-bold leading-snug line-clamp-3 text-amber-50 drop-shadow">{{ $book->title }}</h4>
+                                        <p class="text-[10px] mt-1 text-amber-200/80 truncate w-full">{{ $book->author }}</p>
+                                    </div>
+                                @else
+                                    <div class="flex h-full flex-col items-center justify-center p-4 text-center bg-gradient-to-br from-amber-800 via-amber-900 to-slate-900 text-amber-100 relative">
+                                        <div class="absolute inset-2 border border-amber-400/30 rounded-xl pointer-events-none"></div>
+                                        <span class="text-3xl mb-2 filter drop-shadow">📚</span>
+                                        <h4 class="text-xs font-bold leading-snug line-clamp-3 text-amber-50 drop-shadow">{{ $book->title }}</h4>
+                                        <p class="text-[10px] mt-1 text-amber-200/80 truncate w-full">{{ $book->author }}</p>
+                                    </div>
+                                @endif
+                            </a>
+
+                            {{-- Stock Status Badge --}}
+                            <span class="status-badge absolute right-2.5 top-2.5 sm:right-3 sm:top-3 inline-flex items-center rounded-full px-2 py-0.5 sm:px-3 sm:py-1 text-[10px] sm:text-xs font-semibold shadow-md backdrop-blur-md border transition-all pointer-events-none {{ $book->stock > 0 ? 'bg-white/95 text-emerald-800 border-emerald-200/80' : 'bg-rose-600/95 text-white border-rose-500/80' }}">
                                 {{ $book->stock > 0 ? 'พร้อมยืม '.$book->stock : 'ถูกยืมหมด' }}
                             </span>
-                        </a>
+                        </div>
+
                         <div class="flex flex-1 flex-col p-3 sm:p-4">
                             <span class="text-[11px] sm:text-xs font-semibold text-emerald-600">{{ $book->category->name ?? 'ไม่ระบุหมวดหมู่' }}</span>
                             <a href="{{ route('books.show', $book) }}" class="mt-1 line-clamp-2 text-xs sm:text-sm font-bold leading-snug text-slate-900 group-hover:text-emerald-700">{{ $book->title }}</a>
                             <p class="mt-1 truncate text-xs sm:text-sm text-slate-500">{{ $book->author }}</p>
                             @if($book->isbn)<p class="mt-0.5 truncate text-[11px] sm:text-xs text-slate-400">ISBN: {{ $book->isbn }}</p>@endif
-                            <div class="mt-auto flex flex-col gap-2 border-t border-slate-100 pt-2.5 sm:pt-3">
-                                <div class="flex items-center justify-between">
-                                    <a href="{{ route('books.show', $book) }}" class="inline-flex items-center gap-1 text-xs sm:text-sm font-semibold text-emerald-600 hover:text-emerald-800 transition">
-                                        <span>ดูรายละเอียด</span>
-                                        <svg class="h-3.5 w-3.5 sm:h-4 sm:w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
-                                    </a>
-                                </div>
+
+                            <div class="mt-auto flex flex-col gap-2.5 border-t border-slate-100 pt-3">
+                                <a href="{{ route('books.show', $book) }}" class="inline-flex items-center justify-between text-xs sm:text-sm font-bold text-emerald-600 hover:text-emerald-800 transition">
+                                    <span>ดูรายละเอียด</span>
+                                    <svg class="h-3.5 w-3.5 sm:h-4 sm:w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+                                </a>
+
                                 @if(Auth::user()->role === 'admin')
-                                    <div class="flex items-center gap-1 border-t border-slate-100 pt-2">
-                                        <a href="{{ route('books.qr', $book) }}" target="_blank" title="QR Code" class="flex-1 inline-flex items-center justify-center rounded-lg bg-slate-100 px-1 py-1 text-[11px] font-semibold text-slate-700 hover:bg-slate-200 transition">
+                                    <div class="grid grid-cols-3 gap-1.5 border-t border-slate-100/80 pt-2.5">
+                                        <a href="{{ route('books.qr', $book) }}" target="_blank" title="QR Code" class="inline-flex items-center justify-center rounded-xl bg-slate-100 py-1.5 text-xs font-bold text-slate-700 hover:bg-slate-200 transition shadow-xs">
                                             QR
                                         </a>
-                                        <a href="{{ route('books.edit', $book) }}" title="แก้ไข" class="flex-1 inline-flex items-center justify-center rounded-lg bg-sky-50 px-1 py-1 text-[11px] font-semibold text-sky-700 hover:bg-sky-100 transition">
+                                        <a href="{{ route('books.edit', $book) }}" title="แก้ไขข้อมูล/รูปภาพ" class="inline-flex items-center justify-center rounded-xl bg-sky-100/80 py-1.5 text-xs font-bold text-sky-800 hover:bg-sky-200 transition shadow-xs">
                                             แก้ไข
                                         </a>
-                                        <form action="{{ route('books.destroy', $book) }}" method="POST" onsubmit="return confirm('ยืนยันการลบหนังสือเล่มนี้หรือไม่?');" class="flex-1 inline">
+                                        <form action="{{ route('books.destroy', $book) }}" method="POST" onsubmit="return confirm('ยืนยันการลบหนังสือเล่มนี้หรือไม่?');" class="inline">
                                             @csrf @method('DELETE')
-                                            <button type="submit" title="ลบ" class="w-full inline-flex items-center justify-center rounded-lg bg-rose-50 px-1 py-1 text-[11px] font-semibold text-rose-700 hover:bg-rose-100 transition">
+                                            <button type="submit" title="ลบหนังสือ" class="w-full inline-flex items-center justify-center rounded-xl bg-rose-100/80 py-1.5 text-xs font-bold text-rose-800 hover:bg-rose-200 transition shadow-xs">
                                                 ลบ
                                             </button>
                                         </form>
