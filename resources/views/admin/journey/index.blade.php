@@ -198,8 +198,8 @@
                         <h3 class="text-base font-bold text-slate-900">รายชื่อและสถิติสมาชิก (Members Stats)</h3>
                         <p class="text-xs text-slate-500 mt-0.5">ค้นหา ตรวจสอบสถิติ และจัดการแต้ม/เหรียญรางวัลเป็นรายบุคคล</p>
                     </div>
-                    <form method="GET" action="{{ route('admin.journey.index') }}" class="flex items-center gap-2">
-                        <input type="text" name="search" value="{{ $search }}" placeholder="ค้นหาชื่อหรืออีเมล..." class="rounded-xl border border-slate-300 bg-white px-3.5 py-2 text-sm text-slate-900 placeholder-slate-400 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 w-64 shadow-sm" />
+                    <form method="GET" action="{{ route('admin.journey.index') }}" class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 w-full sm:w-auto">
+                        <input type="text" name="search" value="{{ $search }}" placeholder="ค้นหาชื่อหรืออีเมล..." class="rounded-xl border border-slate-300 bg-white px-3.5 py-2 text-sm text-slate-900 placeholder-slate-400 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 w-full sm:w-64 shadow-sm" />
                         <button type="submit" class="rounded-xl bg-slate-900 px-4 py-2 text-sm font-semibold text-white hover:bg-slate-800 transition">
                             ค้นหา
                         </button>

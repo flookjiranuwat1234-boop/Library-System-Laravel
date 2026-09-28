@@ -34,8 +34,8 @@
 
             {{-- Main Table Shell --}}
             <div class="overflow-hidden rounded-2xl border border-slate-200/80 bg-white shadow-sm">
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left border-collapse">
+                <div class="overflow-x-auto -mx-0.5 scrollbar-thin">
+                    <table class="w-full min-w-[640px] text-left border-collapse">
                         <thead>
                             <tr class="border-b border-slate-200/80 bg-slate-50/80 text-xs font-semibold text-slate-500">
                                 <th class="px-4 py-3 text-left">รายการหนังสือ</th>

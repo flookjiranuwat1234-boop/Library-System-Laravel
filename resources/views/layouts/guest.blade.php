@@ -29,9 +29,9 @@
             <div class="pointer-events-none absolute top-1/2 right-0 h-96 w-96 rounded-full bg-teal-300/20 blur-3xl"></div>
 
             <!-- Main Container -->
-            <div class="relative min-h-[500px] w-full max-w-4xl overflow-hidden rounded-3xl border border-slate-200/80 bg-white shadow-2xl shadow-slate-300/40">
+            <div class="relative w-full max-w-4xl overflow-hidden rounded-3xl border border-slate-200/80 bg-white shadow-2xl shadow-slate-300/40 lg:min-h-[500px]">
                 
-                <!-- Sliding Green Branding Panel (Overlay Card) -->
+                <!-- Sliding Green Branding Panel (Overlay Card - Desktop Only) -->
                 <div class="absolute inset-y-0 z-20 hidden w-1/2 overflow-hidden bg-gradient-to-br from-emerald-600 via-teal-600 to-emerald-800 p-8 text-white transition-transform duration-700 ease-in-out lg:flex lg:flex-col lg:justify-between"
                      :class="activeTab === 'login' ? 'translate-x-0 rounded-r-3xl' : 'translate-x-full rounded-l-3xl'">
                     <div class="absolute -right-24 -top-24 h-72 w-72 rounded-full border-[48px] border-white/10"></div>
@@ -82,23 +82,67 @@
                 </div>
 
                 <!-- Form Area Content Grid (2 Columns behind sliding panel) -->
-                <div class="grid w-full grid-cols-1 lg:grid-cols-2">
-                    <!-- Left Slot (Register Form Container on desktop when panel moves right) -->
-                    <div class="flex flex-col justify-center p-6 sm:p-8" :class="activeTab === 'register' ? 'block' : 'hidden lg:flex lg:opacity-0 lg:pointer-events-none'">
-                        @if ($mode === 'register')
-                            {{ $slot }}
-                        @else
-                            @include('auth.register-form-partial')
-                        @endif
+                <div class="w-full">
+                    <!-- Mobile Top Brand & Sliding Segmented Switch (Visible on small screens) -->
+                    <div class="border-b border-slate-100 p-4 sm:p-5 lg:hidden">
+                        <a href="/" class="flex items-center justify-center gap-2 mb-4">
+                            <div class="flex h-8 w-8 items-center justify-center rounded-lg bg-emerald-600 p-1.5 text-white shadow-sm">
+                                <svg class="h-full w-full" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z"/>
+                                    <path d="M6.5 6H20"/>
+                                    <path d="M6.5 18H20"/>
+                                </svg>
+                            </div>
+                            <span class="text-base font-bold text-slate-900">{{ config('app.name', 'ระบบห้องสมุด') }}</span>
+                        </a>
+
+                        <!-- Interactive Sliding Tab Switcher -->
+                        <div class="relative flex rounded-2xl bg-slate-100/90 p-1 border border-slate-200/60 shadow-inner">
+                            <!-- Animated Sliding Background Highlight -->
+                            <div class="absolute inset-y-1 w-[calc(50%-4px)] rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 shadow-md shadow-emerald-950/20 transition-all duration-500 ease-out"
+                                 :class="activeTab === 'login' ? 'left-1 translate-x-0' : 'left-1 translate-x-full'"></div>
+
+                            <button type="button" 
+                                    @click="activeTab = 'login'; window.history.pushState({}, '', '{{ route('login') }}')" 
+                                    class="relative z-10 w-1/2 py-2.5 text-center text-xs font-bold transition-colors duration-300"
+                                    :class="activeTab === 'login' ? 'text-white' : 'text-slate-600 hover:text-slate-900'">
+                                เข้าสู่ระบบ
+                            </button>
+                            <button type="button" 
+                                    @click="activeTab = 'register'; window.history.pushState({}, '', '{{ route('register') }}')" 
+                                    class="relative z-10 w-1/2 py-2.5 text-center text-xs font-bold transition-colors duration-300"
+                                    :class="activeTab === 'register' ? 'text-white' : 'text-slate-600 hover:text-slate-900'">
+                                สมัครสมาชิก
+                            </button>
+                        </div>
                     </div>
 
-                    <!-- Right Slot (Login Form Container on desktop when panel is left) -->
-                    <div class="flex flex-col justify-center p-6 sm:p-8" :class="activeTab === 'login' ? 'block' : 'hidden lg:flex lg:opacity-0 lg:pointer-events-none'">
-                        @if ($mode === 'login')
-                            {{ $slot }}
-                        @else
-                            @include('auth.login-form-partial')
-                        @endif
+                    <!-- Responsive Sliding Carousel / Forms Container -->
+                    <div class="relative overflow-hidden w-full">
+                        <!-- Mobile Sliding Carousel Track (Slides -100% on Register, 0% on Login) -->
+                        <div class="flex w-[200%] transition-transform duration-500 ease-in-out lg:w-full lg:grid lg:grid-cols-2 lg:transform-none"
+                             :class="activeTab === 'login' ? 'translate-x-0' : '-translate-x-1/2 lg:translate-x-0'">
+                            
+                            <!-- Left / First Mobile Slide: Login Form -->
+                            <div class="w-1/2 lg:w-full flex flex-col justify-center p-5 sm:p-8 lg:order-2"
+                                 :class="activeTab === 'login' ? 'opacity-100 transition-opacity duration-300' : 'opacity-40 lg:opacity-0 lg:pointer-events-none'">
+                                @if ($mode === 'login')
+                                    {{ $slot }}
+                                @else
+                                    @include('auth.login-form-partial')
+                                @endif
+                            </div>
+
+                            <!-- Right / Second Mobile Slide: Register Form -->
+                            <div class="w-1/2 lg:w-full flex flex-col justify-center p-5 sm:p-8 lg:order-1"
+                                 :class="activeTab === 'register' ? 'opacity-100 transition-opacity duration-300' : 'opacity-40 lg:opacity-0 lg:pointer-events-none'">
+                                @if ($mode === 'register')
+                                    {{ $slot }}
+                                @else
+                                    @include('auth.register-form-partial')
+                                @endif
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

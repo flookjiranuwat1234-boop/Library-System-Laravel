@@ -201,33 +201,33 @@
                                     <p class="text-[10px] mt-1 text-amber-200/80 truncate w-full">{{ $book->author }}</p>
                                 </div>
                             @endif
-                            <span class="status-badge absolute right-3 top-3 inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold shadow-md backdrop-blur-md border transition-all {{ $book->stock > 0 ? 'bg-white/95 text-emerald-800 border-emerald-200/80' : 'bg-rose-600/95 text-white border-rose-500/80' }}">
+                            <span class="status-badge absolute right-2.5 top-2.5 sm:right-3 sm:top-3 inline-flex items-center rounded-full px-2 py-0.5 sm:px-3 sm:py-1 text-[10px] sm:text-xs font-semibold shadow-md backdrop-blur-md border transition-all {{ $book->stock > 0 ? 'bg-white/95 text-emerald-800 border-emerald-200/80' : 'bg-rose-600/95 text-white border-rose-500/80' }}">
                                 {{ $book->stock > 0 ? 'พร้อมยืม '.$book->stock : 'ถูกยืมหมด' }}
                             </span>
                         </a>
-                        <div class="flex flex-1 flex-col p-4">
-                            <span class="text-xs font-semibold text-emerald-600">{{ $book->category->name ?? 'ไม่ระบุหมวดหมู่' }}</span>
-                            <a href="{{ route('books.show', $book) }}" class="mt-1 line-clamp-2 font-bold leading-snug text-slate-900 group-hover:text-emerald-700">{{ $book->title }}</a>
-                            <p class="mt-1 truncate text-sm text-slate-500">{{ $book->author }}</p>
-                            @if($book->isbn)<p class="mt-0.5 truncate text-xs text-slate-400">ISBN: {{ $book->isbn }}</p>@endif
-                            <div class="mt-auto flex flex-col gap-2.5 border-t border-slate-100 pt-3">
+                        <div class="flex flex-1 flex-col p-3 sm:p-4">
+                            <span class="text-[11px] sm:text-xs font-semibold text-emerald-600">{{ $book->category->name ?? 'ไม่ระบุหมวดหมู่' }}</span>
+                            <a href="{{ route('books.show', $book) }}" class="mt-1 line-clamp-2 text-xs sm:text-sm font-bold leading-snug text-slate-900 group-hover:text-emerald-700">{{ $book->title }}</a>
+                            <p class="mt-1 truncate text-xs sm:text-sm text-slate-500">{{ $book->author }}</p>
+                            @if($book->isbn)<p class="mt-0.5 truncate text-[11px] sm:text-xs text-slate-400">ISBN: {{ $book->isbn }}</p>@endif
+                            <div class="mt-auto flex flex-col gap-2 border-t border-slate-100 pt-2.5 sm:pt-3">
                                 <div class="flex items-center justify-between">
-                                    <a href="{{ route('books.show', $book) }}" class="inline-flex items-center gap-1 text-sm font-semibold text-emerald-600 hover:text-emerald-800 transition">
+                                    <a href="{{ route('books.show', $book) }}" class="inline-flex items-center gap-1 text-xs sm:text-sm font-semibold text-emerald-600 hover:text-emerald-800 transition">
                                         <span>ดูรายละเอียด</span>
-                                        <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+                                        <svg class="h-3.5 w-3.5 sm:h-4 sm:w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
                                     </a>
                                 </div>
                                 @if(Auth::user()->role === 'admin')
-                                    <div class="flex items-center gap-1.5 border-t border-slate-100 pt-2">
-                                        <a href="{{ route('books.qr', $book) }}" target="_blank" title="QR Code" class="flex-1 inline-flex items-center justify-center rounded-lg bg-slate-100 px-1.5 py-1 text-xs font-semibold text-slate-700 hover:bg-slate-200 transition">
-                                            QR Code
+                                    <div class="flex items-center gap-1 border-t border-slate-100 pt-2">
+                                        <a href="{{ route('books.qr', $book) }}" target="_blank" title="QR Code" class="flex-1 inline-flex items-center justify-center rounded-lg bg-slate-100 px-1 py-1 text-[11px] font-semibold text-slate-700 hover:bg-slate-200 transition">
+                                            QR
                                         </a>
-                                        <a href="{{ route('books.edit', $book) }}" title="แก้ไข" class="flex-1 inline-flex items-center justify-center rounded-lg bg-sky-50 px-1.5 py-1 text-xs font-semibold text-sky-700 hover:bg-sky-100 transition">
+                                        <a href="{{ route('books.edit', $book) }}" title="แก้ไข" class="flex-1 inline-flex items-center justify-center rounded-lg bg-sky-50 px-1 py-1 text-[11px] font-semibold text-sky-700 hover:bg-sky-100 transition">
                                             แก้ไข
                                         </a>
                                         <form action="{{ route('books.destroy', $book) }}" method="POST" onsubmit="return confirm('ยืนยันการลบหนังสือเล่มนี้หรือไม่?');" class="flex-1 inline">
                                             @csrf @method('DELETE')
-                                            <button type="submit" title="ลบ" class="w-full inline-flex items-center justify-center rounded-lg bg-rose-50 px-1.5 py-1 text-xs font-semibold text-rose-700 hover:bg-rose-100 transition">
+                                            <button type="submit" title="ลบ" class="w-full inline-flex items-center justify-center rounded-lg bg-rose-50 px-1 py-1 text-[11px] font-semibold text-rose-700 hover:bg-rose-100 transition">
                                                 ลบ
                                             </button>
                                         </form>
